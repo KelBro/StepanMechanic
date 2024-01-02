@@ -1,1 +1,1 @@
-print('abo43634ПРРППР5bA')
+print('abo43634ПРРПР5bA')
