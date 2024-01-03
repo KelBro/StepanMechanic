@@ -4,10 +4,15 @@ import sys
 
 FPS = 50
 
-
 def load_image(name, colorkey=None):
-    image = pygame.image.load(name)
+    fullname = os.path.join('data', name)
+    # если файл не существует, то выходим
+    if not os.path.isfile(fullname):
+        print(f"Файл с изображением '{fullname}' не найден")
+        sys.exit()
+    image = pygame.image.load(fullname)
     return image
+
 
 def start_screen():
     pygame.init()
