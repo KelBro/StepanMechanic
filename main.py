@@ -20,6 +20,10 @@ def load_image(name, colorkey=None):
     return image
 
 def start_screen():
+    pygame.init()
+    pygame.display.set_caption('Движущийся круг 2')
+    size = WIDTH, HEIGHT = 800, 400
+    screen = pygame.display.set_mode(size)
     intro_text = ["ЗАСТАВКА", "",
                   "Правила игры",
                   "Если в правилах несколько строк,",
