@@ -42,7 +42,7 @@ clock = pygame.time.Clock()
     #     text_coord += intro_rect.height
     #     screen.blit(string_rendered, intro_rect)
 running = True
-green_buttoN = Button(WIDTH/2-(252/2), 200, 100, 74, '', 'C:/Users/Mr_Kel/PycharmProjects/StepanMechanic/knopka.png', 'supermegatreckotkotorogovsevahue.mp3')
+green_buttoN = Button(WIDTH/2-(252/2), 200, 100, 74, '', 'knopka.png', 'supermegatreckotkotorogovsevahue.mp3')
 while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
