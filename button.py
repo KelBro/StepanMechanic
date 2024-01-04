@@ -46,8 +46,8 @@ import pygame
 pygame.init()
 
 # Установка размеров окна
-window_width = 1300
-window_height = 1300
+window_width = 500
+window_height = 400
 window = pygame.display.set_mode((window_width, window_height))
 
 # Загрузка изображений для кнопки
@@ -64,7 +64,7 @@ def draw_button(x, y, image):
 # Основной цикл игры
 running = True
 button_pressed = False
-x, y = 100, 100  # Начальные координаты кнопки
+x, y = 10, 10  # Начальные координаты кнопки
 while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
