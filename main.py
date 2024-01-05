@@ -48,9 +48,9 @@ import pygame
 # pygame.quit()
 
 
-def draw_text(message, x, y, font_color=(0, 0, 0), font_type='PingPong.ttf', font_size=30):
+def draw_text(message, x, y, font_color=(0, 0, 0), font_type='PingPong.otf', font_size=30):
     font_type = pygame.font.Font(font_type, font_size)
-    text = font_type.render(message, True, font_color)
+    text = font_type.render(message, False, font_color)
     screen.blit(text, (x, y))
 
 
