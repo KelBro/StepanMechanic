@@ -82,7 +82,7 @@ def display_scene1():
     draw_text(screen, 'СТЕПАН МЕХАНИК', 50, 200, 50)
     draw_text(screen, 'ВОЗРОЖДЕНИЕ', 50, 200, 100)
     draw_button(button_color)
-    draw_text(screen, 'pohui', 350, 500)
+    draw_text(screen, 'pohui', 100, 300, 185)
     pygame.display.flip()
 
 
@@ -110,6 +110,8 @@ update = False
 running = True
 button_color = (255, 0, 0)
 current_scene = "scene1"
+soundd = pygame.mixer.Sound('supermegatreckotkotorogovsevahue.mp3')
+pygame.mixer.Sound.play(soundd)
 while running:
 
     for event in pygame.event.get():
