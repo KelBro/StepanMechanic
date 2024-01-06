@@ -48,7 +48,7 @@ import pygame
 # pygame.quit()
 
 
-def draw_text(message, x, y, font_color=(0, 0, 0), font_type='PingPong.otf', font_size=30):
+def printText(message, screen, x, y, font_color=(0, 0, 0), font_type='PingPong.otf', font_size=50):
     font_type = pygame.font.Font(font_type, font_size)
     text = font_type.render(message, False, font_color)
     screen.blit(text, (x, y))
@@ -62,7 +62,7 @@ class Button:
         self.ic = (13, 162, 58)
         self.ac = (23, 204, 58)
 
-    def draw(self, x, y, text, action=None):
+    def draw(self, x, y, text, centerx, centery, action=None):
         mouse = pygame.mouse.get_pos()
         click = pygame.mouse.get_pressed()
 
@@ -71,40 +71,12 @@ class Button:
                 pygame.draw.rect(self.screen, self.ic, (x, y, self.w, self.h))
 
                 if click[0] == 1:
-                    print('AHUET, KAK ZHE MNE POHUI BLYAT, KAKAYA NAHUI RAZNICA EBANI NASRAL BLYAT')
-                    pygame.time.delay(300)
-                    if action is not None:
-                        action()
+                    print('hui')
+                    pygame.time.delay(100)
+                    if action == 'change':
+
+            else:
+                pygame.draw.rect(self.screen, self.ac, (x, y, self.w, self.h))
         else:
             pygame.draw.rect(self.screen, self.ac, (x, y, self.w, self.h))
-        draw_text(text, x + 5, y + 5)
-
-
-
-# Определение цветов
-WHITE = (255, 255, 255)
-RED = (255, 0, 0)
-a = 1
-# Инициализация библиотеки Pygame
-pygame.init()
-
-# Установка размеров окна
-screen_width = 800
-screen_height = 600
-screen = pygame.display.set_mode((screen_width, screen_height))
-button = Button(screen, 100, 50)
-# Основной цикл программы
-running = True
-screen.fill(WHITE)
-while running:
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            running = False
-    # Заливка экрана белым цветом
-    button.draw(100, 50, 'ya ebal')
-
-    # Обновление экрана
-    pygame.display.flip()
-
-# Выход из программы
-pygame.quit()
+        printText(text, self.screen, self.w + (x // centerx), y + (self.h // centery))

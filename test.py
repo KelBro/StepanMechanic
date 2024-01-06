@@ -67,9 +67,42 @@ import pygame
 pygame.init()
 
 
-# Функция для отрисовки кнопки
-def draw_button(color):
-    pygame.draw.rect(screen, color, (300, 200, 200, 100))
+def printText(message, screen, x, y, font_color=(0, 0, 0), font_type='PingPong.otf', font_size=50):
+    font_type = pygame.font.Font(font_type, font_size)
+    text = font_type.render(message, False, font_color)
+    screen.blit(text, (x, y))
+
+
+class Button:
+    def __init__(self, screen, w, h):
+        self.w = w
+        self.h = h
+        self.screen = screen
+        self.ic = (13, 162, 58)
+        self.ac = (23, 204, 58)
+
+    def draw(self, x, y, text, centerx, centery, action=None):
+        global current_scene
+        mouse = pygame.mouse.get_pos()
+        click = pygame.mouse.get_pressed()
+
+        if x < mouse[0] < x + self.w:
+            if y < mouse[1] < y + self.h:
+                pygame.draw.rect(self.screen, self.ic, (x, y, self.w, self.h))
+
+                if click[0] == 1:
+                    print('hui')
+                    pygame.time.delay(100)
+                    if action == 'change':
+                        soundd = pygame.mixer.Sound('supermegatreckotkotorogovsevahue.mp3')
+                        pygame.mixer.Sound.play(soundd)
+                        current_scene = 'scene2'
+
+            else:
+                pygame.draw.rect(self.screen, self.ac, (x, y, self.w, self.h))
+        else:
+            pygame.draw.rect(self.screen, self.ac, (x, y, self.w, self.h))
+        printText(text, self.screen, self.w + (x // centerx), y + (self.h // centery))
 
 
 # Функция для отображения сцены 1
@@ -81,8 +114,8 @@ def display_scene1():
     screen.blit(background_image, (0, 0))
     draw_text(screen, 'СТЕПАН МЕХАНИК', 50, 200, 50)
     draw_text(screen, 'ВОЗРОЖДЕНИЕ', 50, 200, 100)
-    draw_button(button_color)
-    draw_text(screen, 'pohui', 100, 300, 185)
+    buttonScene1 = Button(screen, 250, 100)
+    buttonScene1.draw(250, 250, 'START', 5, 6, 'change')
     pygame.display.flip()
 
 
@@ -108,31 +141,21 @@ screen = pygame.display.set_mode((width, height))
 # Основной цикл программы
 update = False
 running = True
-button_color = (255, 0, 0)
-current_scene = "scene1"
-soundd = pygame.mixer.Sound('supermegatreckotkotorogovsevahue.mp3')
-pygame.mixer.Sound.play(soundd)
-while running:
 
+button_color = (255, 0, 0)
+
+current_scene = "scene1"
+
+
+
+while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
-        if event.type == pygame.MOUSEBUTTONDOWN:
-            mouse_x, mouse_y = pygame.mouse.get_pos()
-            if 300 <= mouse_x <= 500 and 200 <= mouse_y <= 300:
-                button_color = (0, 255, 0)
-                if current_scene == "scene1":
-                    current_scene = "scene2"
-                else:
-                    current_scene = "scene1"
-        if event.type == pygame.MOUSEBUTTONUP:
-            button_color = (255, 0, 0)
-    # Добавляем код для перехода на другую сцену
     if current_scene == "scene1":
         display_scene1()
-    elif current_scene == "scene2":
+    else:
         display_scene2()
-
     # Обновление экрана
     pygame.display.flip()
 
