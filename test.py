@@ -121,7 +121,51 @@ def display_scene1():
 
 # Функция для отображения сцены 2
 def display_scene2():
-    screen.fill((255, 255, 255))
+    # screen.fill((255, 255, 255))
+    # Загрузка изображения для заднего фона
+    background_image = pygame.image.load('data/garage.jpg')
+    background_image = pygame.transform.scale(background_image, (width, height))
+    # Рисование заднего фона
+    screen.blit(background_image, (0, 0))
+
+    # Добавление полок для предметов
+    pygame.draw.line(screen, (255, 255, 255), [10, 150], [150, 150], 4)
+    pygame.draw.line(screen, (255, 255, 255), [10, 300], [150, 300], 4)
+    pygame.draw.line(screen, (255, 255, 255), [650, 150], [790, 150], 4)
+    pygame.draw.line(screen, (255, 255, 255), [650, 300], [790, 300], 4)
+    pygame.draw.line(screen, (255, 255, 255), [650, 450], [790, 450], 4)
+
+    # Губка
+    spray_paint = pygame.image.load('data/sponge.png').convert_alpha()
+    spray_paint = pygame.transform.scale(spray_paint, (110, 110))
+    spray_paint.set_colorkey((255, 255, 255))
+    screen.blit(spray_paint, (20, 50))
+
+    # Вытягиватель вмятин
+    spray_paint = pygame.image.load('data/dent_puller.png').convert_alpha()
+    spray_paint = pygame.transform.scale(spray_paint, (140, 140))
+    spray_paint.set_colorkey((255, 255, 255))
+    screen.blit(spray_paint, (650, 25))
+
+    # Краска
+    spray_paint = pygame.image.load('data/f_spray_paint.png').convert_alpha()
+    spray_paint = pygame.transform.scale(spray_paint, (170, 170))
+    spray_paint.set_colorkey((255, 255, 255))
+    screen.blit(spray_paint, (630, 290))
+
+    # Клей
+    spray_paint = pygame.image.load('data/glue.png').convert_alpha()
+    spray_paint = pygame.transform.scale(spray_paint, (150, 150))
+    spray_paint.set_colorkey((255, 255, 255))
+    screen.blit(spray_paint, (650, 170))
+
+    # Мастерок
+    spray_paint = pygame.image.load('data/trowel.png').convert_alpha()
+    spray_paint = pygame.transform.scale(spray_paint, (150, 150))
+    spray_paint.set_colorkey((255, 255, 255))
+    screen.blit(spray_paint, (15, 175))
+
+
     draw_text(screen, 'pizdec', 50, 350, 250)
     pygame.display.flip()
 
@@ -148,6 +192,8 @@ current_scene = "scene1"
 
 
 
+# soundd = pygame.mixer.Sound('supermegatreckotkotorogovsevahue.mp3')
+# pygame.mixer.Sound.play(soundd)
 while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
