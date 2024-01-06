@@ -165,7 +165,6 @@ def display_scene2():
     spray_paint.set_colorkey((255, 255, 255))
     screen.blit(spray_paint, (15, 175))
 
-
     draw_text(screen, 'pizdec', 50, 350, 250)
     pygame.display.flip()
 
