@@ -3,6 +3,21 @@ import pygame
 pygame.init()
 
 
+class Sprite(pygame.sprite.Sprite):
+    def __init__(self, image_path, x, y, size=None):
+        super().__init__()
+        image_path = 'data/' + image_path
+        self.image = pygame.image.load(image_path)
+        if size is not None:
+            self.image = pygame.transform.scale(self.image, size)
+        self.rect = self.image.get_rect()
+        self.rect.x = x
+        self.rect.y = y
+
+    def update(self):
+        pass  # Метод для обновления спрайта, если это необходимо
+
+
 def printText(message, screen, x, y, font_color=(0, 0, 0), font_type='PingPong.otf', font_size=50):
     font_type = pygame.font.Font(font_type, font_size)
     text = font_type.render(message, False, font_color)
@@ -12,6 +27,7 @@ def printText(message, screen, x, y, font_color=(0, 0, 0), font_type='PingPong.o
 class Button:
     def __init__(self, screen, w, h, scene):
         self.w = w
+
         self.h = h
         self.screen = screen
         self.ic = (13, 162, 58)
@@ -40,7 +56,7 @@ class Button:
         printText(text, self.screen, self.w + (x // centerx), y + (self.h // centery))
 
 
-def sprites(file, w, h, x, y):
+def photo(file, w, h, x, y):
     file = 'data/' + file
     spray_paint = pygame.image.load(file).convert_alpha()
     spray_paint = pygame.transform.scale(spray_paint, (w, h))
@@ -51,7 +67,7 @@ def sprites(file, w, h, x, y):
 # Функция для отображения сцены 1
 def display_scene1():
     # Загрузка изображения для заднего фона
-    sprites('fon.jpg', width, height, 0, 0)
+    photo('fon.jpg', width, height, 0, 0)
     draw_text(screen, 'СТЕПАН МЕХАНИК', 50, 200, 50)
     draw_text(screen, 'ВОЗРОЖДЕНИЕ', 50, 200, 100)
     buttonScene1 = Button(screen, 250, 100, "scene2")
@@ -63,7 +79,7 @@ def display_scene1():
 def display_scene2():
     # screen.fill((255, 255, 255))
     # Загрузка изображения для заднего фона
-    sprites('garage.jpg', width, height, 0, 0)
+    photo('garage.jpg', width, height, 0, 0)
 
     # Добавление полок для предметов
     pygame.draw.line(screen, (255, 255, 255), [10, 150], [150, 150], 4)
@@ -73,20 +89,23 @@ def display_scene2():
     pygame.draw.line(screen, (255, 255, 255), [650, 450], [790, 450], 4)
 
     # Губка
-    sprites('sponge.png', 110, 110, 20, 50)
+    sponge = Sprite('sponge.png', 20, 50, (110, 110))
 
     # Вытягиватель вмятин
-    sprites('dent_puller.png', 140, 140, 650, 25)
+    dent_puller = Sprite('dent_puller.png', 650, 25, (140, 140))
 
     # Краска
-    sprites('f_spray_paint.png', 170, 170, 630, 290)
+    f_spray_paint = Sprite('f_spray_paint.png', 630, 290, (170, 170))
 
     # Клей
-    sprites('glue.png', 150, 150, 650, 170)
+    glue = Sprite('glue.png', 650, 170, (150, 150))
 
     # Мастерок
-    sprites('trowel.png', 150, 150, 15, 175)
+    trowel = Sprite('trowel.png', 15, 175, (150, 150))
 
+    all_sprites = pygame.sprite.Group()
+    all_sprites.add(sponge, dent_puller, f_spray_paint, glue, trowel)
+    all_sprites.draw(screen)
     pygame.display.flip()
 
 
@@ -116,7 +135,7 @@ while running:
             running = False
     if current_scene == "scene1":
         display_scene1()
-    else:
+    elif current_scene == 'scene2':
         display_scene2()
     # Обновление экрана
     pygame.display.flip()
