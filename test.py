@@ -1,4 +1,5 @@
 import pygame
+from cars import Cars
 # Инициализация Pygame
 pygame.init()
 
@@ -21,7 +22,6 @@ class Sprite(pygame.sprite.Sprite):
 class Button:
     def __init__(self, screen, w, h, name=None):
         self.w = w
-
         self.h = h
         self.screen = screen
         self.ic = (13, 162, 58)
@@ -117,6 +117,9 @@ def display_scene2():
     trowel_button.draw(15, 175)
 
     all_sprites.draw(screen)
+    car1 = Cars('red_car')
+    car1.draw(screen)
+
     pygame.display.flip()
 
 
