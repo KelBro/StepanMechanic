@@ -3,9 +3,10 @@ import pygame
 pygame.init()
 
 
+
 class Sprite(pygame.sprite.Sprite):
-    def __init__(self, image_path, x, y, size=None):
-        super().__init__()
+    def __init__(self, image_path, x, y, size=None, *group):
+        super().__init__(*group)
         image_path = 'data/' + image_path
         self.image = pygame.image.load(image_path)
         if size is not None:
@@ -14,14 +15,28 @@ class Sprite(pygame.sprite.Sprite):
         self.rect.x = x
         self.rect.y = y
 
-    def update(self, *args):
-        if args and args[0].type == pygame.MOUSEBUTTONDOWN and \
-                self.rect.collidepoint(args[0].pos):
-            pygame.mouse.set_visible(False)
+    def update(self, pos, cursor):
+        # global update, pos
+        # if args and args[0].type == pygame.MOUSEBUTTONDOWN and \
+        #         self.rect.collidepoint(args[0].pos):
+        #     pygame.mouse.set_visible(False)
+        #     pos = self.rect.center
+        #     self.rect.center = pygame.mouse.get_pos()
+        if self.rect.collidepoint(pos):
+            cursor.image = self.image
 
-            x, y = pygame.mouse.get_pos()
-            screen.blit(self.image, (x, y))
+class Cursor(pygame.sprite.Sprite):
+    img = pygame.image.load('data/glue.png')
+    def __init__(self, x, y, *group):
+        super().__init__(*group)
+        self.image = self.img
+        self.rect = self.image.get_rect()
+        self.rect.x = x
+        self.rect.y = y
 
+    def update(self, pos):
+        self.rect.x = pos[0]
+        self.rect.y = pos[1]
 
 def printText(message, screen, x, y, font_color=(0, 0, 0), font_type='PingPong.otf', font_size=50):
     font_type = pygame.font.Font(font_type, font_size)
@@ -62,11 +77,11 @@ class Button:
 
 
 def photo(file, w, h, x, y):
-    file = 'data/' + file
-    spray_paint = pygame.image.load(file).convert_alpha()
-    spray_paint = pygame.transform.scale(spray_paint, (w, h))
-    spray_paint.set_colorkey((255, 255, 255))
-    screen.blit(spray_paint, (x, y))
+    # file = 'data/' + file
+    # spray_paint = pygame.image.load(file).convert_alpha()
+    # spray_paint = pygame.transform.scale(spray_paint, (w, h))
+    # spray_paint.set_colorkey((255, 255, 255))
+    screen.blit(BACKGROUND, (x, y))
 
 
 # Функция для отображения сцены 1
@@ -93,25 +108,9 @@ def display_scene2():
     pygame.draw.line(screen, (255, 255, 255), [650, 300], [790, 300], 4)
     pygame.draw.line(screen, (255, 255, 255), [650, 450], [790, 450], 4)
 
-    # Губка
-    sponge = Sprite('sponge.png', 20, 50, (110, 110))
-
-    # Вытягиватель вмятин
-    dent_puller = Sprite('dent_puller.png', 650, 25, (140, 140))
-
-    # Краска
-    f_spray_paint = Sprite('f_spray_paint.png', 630, 290, (170, 170))
-
-    # Клей
-    glue = Sprite('glue.png', 650, 170, (150, 150))
-
-    # Мастерок
-    trowel = Sprite('trowel.png', 15, 175, (150, 150))
-
-    all_sprites = pygame.sprite.Group()
-    all_sprites.add(sponge, dent_puller, f_spray_paint, glue, trowel)
     all_sprites.draw(screen)
-    pygame.display.flip()
+    cursore_group.update(pygame.mouse.get_pos())
+    # pygame.display.flip()
 
 
 def draw_text(window, text, size, x, y, color=(0, 0, 0)):
@@ -126,20 +125,51 @@ def draw_text(window, text, size, x, y, color=(0, 0, 0)):
 width, height = 800, 600
 screen = pygame.display.set_mode((width, height))
 
+
+BACKGROUND = pygame.image.load('data/garage.jpg').convert_alpha()
+BACKGROUND = pygame.transform.scale(BACKGROUND, (width, height))
+BACKGROUND.set_colorkey((255, 255, 255))
+
+
 # Основной цикл программы
 update = False
 running = True
 
 button_color = (255, 0, 0)
 
+all_sprites = pygame.sprite.Group()
+tool_group = pygame.sprite.Group()
+cursore_group = pygame.sprite.Group()
+
 current_scene = "scene1"
+
+# Губка
+sponge = Sprite('sponge.png', 20, 50, (110, 110), tool_group, all_sprites)
+
+# Вытягиватель вмятин
+dent_puller = Sprite('dent_puller.png', 650, 25, (140, 140), tool_group, all_sprites)
+
+# Краска
+f_spray_paint = Sprite('f_spray_paint.png', 630, 290, (170, 170), tool_group, all_sprites)
+
+# Клей
+glue = Sprite('glue.png', 650, 170, (150, 150), tool_group, all_sprites)
+
+# Мастерок
+trowel = Sprite('trowel.png', 15, 175, (150, 150), tool_group, all_sprites)
+
+pos = 0
+
+cursor = Cursor(0, 0, cursore_group, all_sprites)
 
 while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
         if event.type == pygame.MOUSEBUTTONDOWN:
-            all_sprites.update(event)
+            tool_group.update(event.pos, cursor)
+
+
     if current_scene == "scene1":
         display_scene1()
     elif current_scene == 'scene2':
