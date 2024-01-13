@@ -3,7 +3,6 @@ import pygame
 pygame.init()
 
 
-
 class Sprite(pygame.sprite.Sprite):
     def __init__(self, image_path, x, y, size=None, *group):
         super().__init__(*group)
@@ -15,28 +14,39 @@ class Sprite(pygame.sprite.Sprite):
         self.rect.x = x
         self.rect.y = y
 
-    def update(self, pos, cursor):
+    def update(self, pos, cursor, button):
         # global update, pos
         # if args and args[0].type == pygame.MOUSEBUTTONDOWN and \
         #         self.rect.collidepoint(args[0].pos):
         #     pygame.mouse.set_visible(False)
         #     pos = self.rect.center
         #     self.rect.center = pygame.mouse.get_pos()
-        if self.rect.collidepoint(pos):
-            cursor.image = self.image
+        if button != 3:
+            if self.rect.collidepoint(pos):
+                cursor.image = self.image
+        else:
+            cursor.image = cursor.img
+
 
 class Cursor(pygame.sprite.Sprite):
-    img = pygame.image.load('data/glue.png')
+
     def __init__(self, x, y, *group):
         super().__init__(*group)
+        self.img = pygame.image.load('data/arrow.png')
         self.image = self.img
         self.rect = self.image.get_rect()
         self.rect.x = x
         self.rect.y = y
+        self.size = self.image.get_size()
 
     def update(self, pos):
-        self.rect.x = pos[0]
-        self.rect.y = pos[1]
+        if self.image != self.img:
+            self.rect.x = pos[0] - self.size[0] - 20
+            self.rect.y = pos[1] - self.size[1] - 20
+        else:
+            self.rect.x = pos[0]
+            self.rect.y = pos[1]
+
 
 def printText(message, screen, x, y, font_color=(0, 0, 0), font_type='PingPong.otf', font_size=50):
     font_type = pygame.font.Font(font_type, font_size)
@@ -100,6 +110,7 @@ def display_scene2():
     # screen.fill((255, 255, 255))
     # Загрузка изображения для заднего фона
     photo('garage.jpg', width, height, 0, 0)
+
 
     # Добавление полок для предметов
     pygame.draw.line(screen, (255, 255, 255), [10, 150], [150, 150], 4)
@@ -167,14 +178,13 @@ while running:
         if event.type == pygame.QUIT:
             running = False
         if event.type == pygame.MOUSEBUTTONDOWN:
-            tool_group.update(event.pos, cursor)
-
+            tool_group.update(event.pos, cursor, event.button)
 
     if current_scene == "scene1":
         display_scene1()
     elif current_scene == 'scene2':
+        pygame.mouse.set_visible(0)
         display_scene2()
-
 
     # Обновление экрана
     pygame.display.flip()
