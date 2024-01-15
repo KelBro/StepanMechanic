@@ -48,35 +48,35 @@ import pygame
 # pygame.quit()
 
 
-def printText(message, screen, x, y, font_color=(0, 0, 0), font_type='PingPong.otf', font_size=50):
-    font_type = pygame.font.Font(font_type, font_size)
-    text = font_type.render(message, False, font_color)
-    screen.blit(text, (x, y))
-
-
-class Button:
-    def __init__(self, screen, w, h):
-        self.w = w
-        self.h = h
-        self.screen = screen
-        self.ic = (13, 162, 58)
-        self.ac = (23, 204, 58)
-
-    def draw(self, x, y, text, centerx, centery, action=None):
-        mouse = pygame.mouse.get_pos()
-        click = pygame.mouse.get_pressed()
-
-        if x < mouse[0] < x + self.w:
-            if y < mouse[1] < y + self.h:
-                pygame.draw.rect(self.screen, self.ic, (x, y, self.w, self.h))
-
-                if click[0] == 1:
-                    print('hui')
-                    pygame.time.delay(100)
-                    if action == 'change':
-
-            else:
-                pygame.draw.rect(self.screen, self.ac, (x, y, self.w, self.h))
-        else:
-            pygame.draw.rect(self.screen, self.ac, (x, y, self.w, self.h))
-        printText(text, self.screen, self.w + (x // centerx), y + (self.h // centery))
+# def printText(message, screen, x, y, font_color=(0, 0, 0), font_type='PingPong.otf', font_size=50):
+#     font_type = pygame.font.Font(font_type, font_size)
+#     text = font_type.render(message, False, font_color)
+#     screen.blit(text, (x, y))
+#
+#
+# class Button:
+#     def __init__(self, screen, w, h):
+#         self.w = w
+#         self.h = h
+#         self.screen = screen
+#         self.ic = (13, 162, 58)
+#         self.ac = (23, 204, 58)
+#
+#     def draw(self, x, y, text, centerx, centery, action=None):
+#         mouse = pygame.mouse.get_pos()
+#         click = pygame.mouse.get_pressed()
+#
+#         if x < mouse[0] < x + self.w:
+#             if y < mouse[1] < y + self.h:
+#                 pygame.draw.rect(self.screen, self.ic, (x, y, self.w, self.h))
+#
+#                 if click[0] == 1:
+#                     print('hui')
+#                     pygame.time.delay(100)
+#                     if action == 'change':
+#
+#             else:
+#                 pygame.draw.rect(self.screen, self.ac, (x, y, self.w, self.h))
+#         else:
+#             pygame.draw.rect(self.screen, self.ac, (x, y, self.w, self.h))
+#         printText(text, self.screen, self.w + (x // centerx), y + (self.h // centery)

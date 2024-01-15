@@ -32,7 +32,6 @@ teacher_car = {
 
 class Cars:
     def __init__(self, file, hover_image_path=None):
-        global red_car
 
         cars = []
         car = []

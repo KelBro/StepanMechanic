@@ -1,5 +1,5 @@
-import pygame
 from cars import Cars
+import pygame
 # Инициализация Pygame
 pygame.init()
 
@@ -56,7 +56,7 @@ def printText(message, screen, x, y, font_color=(0, 0, 0), font_type='PingPong.o
 
 
 class Button:
-    def __init__(self, screen, w, h, scene):
+    def __init__(self, screen, w, h, scene=None):
         self.w = w
 
         self.h = h
@@ -92,13 +92,16 @@ def photo(file, w, h, x, y):
     # spray_paint = pygame.image.load(file).convert_alpha()
     # spray_paint = pygame.transform.scale(spray_paint, (w, h))
     # spray_paint.set_colorkey((255, 255, 255))
-    screen.blit(BACKGROUND, (x, y))
+    if file == 'fon':
+        screen.blit(fon, (x, y))
+    else:
+        screen.blit(BACKGROUND, (x, y))
 
 
 # Функция для отображения сцены 1
 def display_scene1():
     # Загрузка изображения для заднего фона
-    photo('fon.jpg', width, height, 0, 0)
+    photo('fon', width, height, 0, 0)
     draw_text(screen, 'СТЕПАН МЕХАНИК', 50, 200, 50)
     draw_text(screen, 'ВОЗРОЖДЕНИЕ', 50, 200, 100)
     buttonScene1 = Button(screen, 250, 100, "scene2")
@@ -110,8 +113,7 @@ def display_scene1():
 def display_scene2():
     # screen.fill((255, 255, 255))
     # Загрузка изображения для заднего фона
-    photo('garage.jpg', width, height, 0, 0)
-
+    photo('garage', width, height, 0, 0)
 
     # Добавление полок для предметов
     pygame.draw.line(screen, (255, 255, 255), [10, 150], [150, 150], 4)
@@ -145,6 +147,9 @@ BACKGROUND = pygame.image.load('data/garage.jpg').convert_alpha()
 BACKGROUND = pygame.transform.scale(BACKGROUND, (width, height))
 BACKGROUND.set_colorkey((255, 255, 255))
 
+fon = pygame.image.load('data/fon.jpg').convert_alpha()
+fon = pygame.transform.scale(fon, (width, height))
+fon.set_colorkey((255, 255, 255))
 
 # Основной цикл программы
 update = False
@@ -155,6 +160,9 @@ button_color = (255, 0, 0)
 all_sprites = pygame.sprite.Group()
 tool_group = pygame.sprite.Group()
 cursore_group = pygame.sprite.Group()
+
+button_view1 = Button(screen, 250, 100, "scene2")
+buttonScene1 = Button(screen, 250, 100, "scene2")
 
 current_scene = "scene1"
 
