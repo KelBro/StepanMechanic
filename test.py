@@ -203,7 +203,7 @@ f_spray_paint = Sprite('f_spray_paint.png', 630, 290, (170, 170), tool_group, al
 glue = Sprite('glue.png', 650, 170, (150, 150), tool_group, all_sprites)
 
 # Мастерок
-trowel = Sprite('trowel.png', 15, 175, (150, 150), tool_group, all_sprites)
+trowel = Sprite('trowel.png', 15, 175, (120, 120), tool_group, all_sprites)
 
 pos = 0
 
