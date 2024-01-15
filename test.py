@@ -69,13 +69,15 @@ class Button:
         global current_scene
         mouse = pygame.mouse.get_pos()
         click = pygame.mouse.get_pressed()
+        if action != 'change':
+            self.ic = (98, 98, 98)
+            self.ac = (144, 144, 144)
 
         if x < mouse[0] < x + self.w:
             if y < mouse[1] < y + self.h:
                 pygame.draw.rect(self.screen, self.ic, (x, y, self.w, self.h))
 
                 if click[0] == 1:
-                    pygame.time.delay(100)
                     if action == 'change':
                         # soundd = pygame.mixer.Sound('supermegatreckotkotorogovsevahue.mp3')
                         # pygame.mixer.Sound.play(soundd)
@@ -122,9 +124,10 @@ def display_scene2():
     pygame.draw.line(screen, (255, 255, 255), [650, 300], [790, 300], 4)
     pygame.draw.line(screen, (255, 255, 255), [650, 450], [790, 450], 4)
 
-    car1 = Cars('red_car')
+
     car1.draw(screen)
 
+    button_view1.draw(200, 50, 'Left', 1.6, 9, 'View1')
     all_sprites.draw(screen)
     cursore_group.update(pygame.mouse.get_pos())
     # pygame.display.flip()
@@ -150,6 +153,7 @@ BACKGROUND.set_colorkey((255, 255, 255))
 fon = pygame.image.load('data/fon.jpg').convert_alpha()
 fon = pygame.transform.scale(fon, (width, height))
 fon.set_colorkey((255, 255, 255))
+car1 = Cars('red_car')
 
 # Основной цикл программы
 update = False
@@ -161,7 +165,7 @@ all_sprites = pygame.sprite.Group()
 tool_group = pygame.sprite.Group()
 cursore_group = pygame.sprite.Group()
 
-button_view1 = Button(screen, 250, 100, "scene2")
+button_view1 = Button(screen, 80, 80, "scene2")
 buttonScene1 = Button(screen, 250, 100, "scene2")
 
 current_scene = "scene1"
