@@ -1,8 +1,8 @@
 import pygame
 
 red_car = {
-    'front': ((265, 250), (266, 201)),
-    'back': ((265, 250), (266, 201)),
+    'front': ((255, 270), (290, 207.7)),
+    'back': ((260, 270), (280, 211)),
     'left': ((130, 300), (530, 171)),
     'right': ((130, 300), (530, 171)),
     'top': ((160, 300), (485, 219))
@@ -37,7 +37,7 @@ class Cars:
         car = []
         angle = ['front', 'back', 'left', 'right', 'top']
         for i in angle:
-            i = 'front'
+            i = 'left'
             self.image = pygame.image.load('data/' + file + '/' + i + '.png')
             dict0 = {}
             car.append(self.image)
