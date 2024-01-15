@@ -1,4 +1,5 @@
 import pygame
+from cars import Cars
 # Инициализация Pygame
 pygame.init()
 
@@ -118,6 +119,9 @@ def display_scene2():
     pygame.draw.line(screen, (255, 255, 255), [650, 150], [790, 150], 4)
     pygame.draw.line(screen, (255, 255, 255), [650, 300], [790, 300], 4)
     pygame.draw.line(screen, (255, 255, 255), [650, 450], [790, 450], 4)
+
+    car1 = Cars('red_car')
+    car1.draw(screen)
 
     all_sprites.draw(screen)
     cursore_group.update(pygame.mouse.get_pos())
