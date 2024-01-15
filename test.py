@@ -124,10 +124,13 @@ def display_scene2():
     pygame.draw.line(screen, (255, 255, 255), [650, 300], [790, 300], 4)
     pygame.draw.line(screen, (255, 255, 255), [650, 450], [790, 450], 4)
 
-
     car1.draw(screen)
 
-    button_view1.draw(200, 50, 'Left', 1.6, 9, 'View1')
+    button_view1.draw(150, 20, 'Left', 2.5, 9, 'View1')
+    button_view2.draw(275, 20, 'Right', 1.56, 9, 'View2')
+    button_view3.draw(400, 20, 'Top', 1.24, 9, 'View3')
+    button_view4.draw(525, 20, 'Behind', 1.253, 9, 'View4')
+
     all_sprites.draw(screen)
     cursore_group.update(pygame.mouse.get_pos())
     # pygame.display.flip()
@@ -165,7 +168,10 @@ all_sprites = pygame.sprite.Group()
 tool_group = pygame.sprite.Group()
 cursore_group = pygame.sprite.Group()
 
-button_view1 = Button(screen, 80, 80, "scene2")
+button_view1 = Button(screen, 110, 110, "scene2")
+button_view2 = Button(screen, 110, 110, "scene2")
+button_view3 = Button(screen, 110, 110, "scene2")
+button_view4 = Button(screen, 110, 110, "scene2")
 buttonScene1 = Button(screen, 250, 100, "scene2")
 
 current_scene = "scene1"
