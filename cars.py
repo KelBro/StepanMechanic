@@ -5,40 +5,38 @@ red_car = {
     'back': ((260, 270), (280, 211)),
     'left': ((130, 300), (530, 171)),
     'right': ((130, 300), (530, 171)),
-    'top': ((160, 300), (485, 219))
+    # 'top': ((160, 300), (485, 219))
 }
 white_car = {
     'front': ((260, 280), (280, 188.7)),
     'back': ((260, 280), (280, 188.7)),
     'left': ((130, 300), (530, 164.9)),
     'right': ((130, 300), (530, 164.9)),
-    'top': ((200, 300), (400, 172))
+    # 'top': ((200, 300), (400, 172))
 }
 yellow_car = {
     'front': ((260, 250), (280, 209.7)),
     'back': ((260, 250), (280, 213.2)),
     'left': ((130, 300), (530, 171)),
     'right': ((130, 300), (530, 171)),
-    'top': ((160, 300), (485, 219))
+    # 'top': ((160, 300), (485, 219))
 }
 teacher_car = {
     'front': ((250, 300), (300, 180.3)),
     'back': ((250, 300), (300, 180.6)),
     'left': ((130, 300), (530, 149.5)),
     'right': ((130, 300), (530, 149.5)),
-    'top': ((160, 300), (485, 219))
+    # 'top': ((160, 300), (485, 219))
 }
 
 
 class Cars:
-    def __init__(self, file, hover_image_path=None):
-
+    def __init__(self, file, angle, hover_image_path=None):
         cars = []
         car = []
-        angle = ['front', 'back', 'left', 'right', 'top']
-        for i in angle:
-            i = 'left'
-            self.image = pygame.image.load('data/' + file + '/' + i + '.png')
+        angles = ['front', 'back', 'left', 'right']
+        if angle in angles:
+            self.image = pygame.image.load('data/' + file + '/' + angle + '.png')
             dict0 = {}
             car.append(self.image)
             cars.append(car)
@@ -50,7 +48,7 @@ class Cars:
                 dict0 = yellow_car
             elif 'teacher_car' == file:
                 dict0 = teacher_car
-            (x, y), (width, height) = dict0.get(i)
+            (x, y), (width, height) = dict0.get(angle)
             self.image = pygame.transform.scale(self.image, (width, height))
             self.hover_image = self.image
 

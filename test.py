@@ -66,7 +66,7 @@ class Button:
         self.scene = scene
 
     def draw(self, x, y, text, centerx, centery, action=None):
-        global current_scene
+        global current_scene, car1
         mouse = pygame.mouse.get_pos()
         click = pygame.mouse.get_pressed()
         if action != 'change':
@@ -82,6 +82,20 @@ class Button:
                         # soundd = pygame.mixer.Sound('supermegatreckotkotorogovsevahue.mp3')
                         # pygame.mixer.Sound.play(soundd)
                         current_scene = self.scene
+                        # вид машины
+                    elif action == 'View1':
+                        car1 = Cars('red_car', 'left')
+                        car1.draw(screen)
+                    elif action == 'View2':
+                        car1 = Cars('red_car', 'right')
+                        car1.draw(screen)
+                    elif action == 'View3':
+                        car1 = Cars('red_car', 'front')
+                        car1.draw(screen)
+                    elif action == 'View4':
+                        car1 = Cars('red_car', 'back')
+                        car1.draw(screen)
+
             else:
                 pygame.draw.rect(self.screen, self.ac, (x, y, self.w, self.h))
         else:
@@ -156,7 +170,7 @@ BACKGROUND.set_colorkey((255, 255, 255))
 fon = pygame.image.load('data/fon.jpg').convert_alpha()
 fon = pygame.transform.scale(fon, (width, height))
 fon.set_colorkey((255, 255, 255))
-car1 = Cars('red_car')
+car1 = Cars('red_car', 'front')
 
 # Основной цикл программы
 update = False
