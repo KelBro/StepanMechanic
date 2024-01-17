@@ -69,13 +69,18 @@ class Button:
         global current_scene, car1
         mouse = pygame.mouse.get_pos()
         click = pygame.mouse.get_pressed()
+        surface = pygame.Surface((150, 400), pygame.SRCALPHA)
         if action != 'change':
-            self.ic = (98, 98, 98)
+            self.ic = (98, 98, 98, 80)
             self.ac = (144, 144, 144)
 
         if x < mouse[0] < x + self.w:
             if y < mouse[1] < y + self.h:
-                pygame.draw.rect(self.screen, self.ic, (x, y, self.w, self.h))
+                if action == 'knopka' or action == 'knopka2' or action == 'knopka3':
+                    pygame.draw.rect(surface, self.ic, surface.get_rect())
+                    self.screen.blit(surface, (x, y))
+                else:
+                    pygame.draw.rect(self.screen, self.ic, (x, y, self.w, self.h))
 
                 if click[0] == 1:
                     if action == 'change':
@@ -97,10 +102,12 @@ class Button:
                         car1.draw(screen)
 
             else:
-                pygame.draw.rect(self.screen, self.ac, (x, y, self.w, self.h))
+                if action != 'knopka' and action != 'knopka2' and action != 'knopka3':
+                    pygame.draw.rect(self.screen, self.ac, (x, y, self.w, self.h))
         else:
-            pygame.draw.rect(self.screen, self.ac, (x, y, self.w, self.h))
-        printText(text, self.screen, self.w + (x // centerx), y + (self.h // centery))
+            if action != 'knopka' and action != 'knopka2' and action != 'knopka3':
+                pygame.draw.rect(self.screen, self.ac, (x, y, self.w, self.h))
+        printText(text, self.screen, centerx, centery)
 
 
 def photo(file, w, h, x, y):
@@ -110,6 +117,12 @@ def photo(file, w, h, x, y):
     # spray_paint.set_colorkey((255, 255, 255))
     if file == 'fon':
         screen.blit(fon, (x, y))
+    elif file == 'knopka':
+        screen.blit(knopka, (x, y))
+    elif file == 'knopka2':
+        screen.blit(knopka2, (x, y))
+    elif file == 'knopka3':
+        screen.blit(knopka3, (x, y))
     else:
         screen.blit(BACKGROUND, (x, y))
 
@@ -120,8 +133,8 @@ def display_scene1():
     photo('fon', width, height, 0, 0)
     draw_text(screen, 'СТЕПАН МЕХАНИК', 50, 200, 50)
     draw_text(screen, 'ВОЗРОЖДЕНИЕ', 50, 200, 100)
-    buttonScene1 = Button(screen, 250, 100, "scene2")
-    buttonScene1.draw(250, 250, 'START', 5, 6, 'change')
+    buttonScene1.draw(250, 200, 'PLAY', 300, 220, 'change')
+    buttonScene2.draw(250, 350, 'LEVELS', 300, 370, 'change')
     pygame.display.flip()
 
 
@@ -140,14 +153,26 @@ def display_scene2():
 
     car1.draw(screen)
 
-    button_view1.draw(150, 20, 'Left', 2.5, 20, 'View1')
-    button_view2.draw(275, 20, 'Right', 1.56, 20, 'View2')
-    button_view3.draw(400, 20, 'Top', 1.24, 20, 'View3')
-    button_view4.draw(525, 20, 'Behind', 1.253, 20, 'View4')
+    button_view1.draw(150, 20, 'Left', 170, 25, 'View1')
+    button_view2.draw(275, 20, 'Right', 285, 25, 'View2')
+    button_view3.draw(400, 20, 'Top', 430, 25, 'View3')
+    button_view4.draw(525, 20, 'Behind', 528, 25, 'View4')
 
     all_sprites.draw(screen)
     cursore_group.update(pygame.mouse.get_pos())
-    # pygame.display.flip()
+
+
+def display_scene3():
+    screen.fill((200, 220, 220))
+
+    photo('knopka', 150, 400, 100, 120)
+    photo('knopka2', 150, 400, 350, 120)
+    photo('knopka3', 150, 400, 575, 120)
+
+    button_lvl1.draw(100, 120, 'ONE', 125, 250, 'knopka')
+    button_lvl2.draw(350, 120, 'TWO', 375, 250, 'knopka2')
+    button_lvl3.draw(575, 120, 'THREE', 580, 250, 'knopka3')
+    button_menu.draw(10, 10, 'MENU', 20, 6, 'change')
 
 
 def draw_text(window, text, size, x, y, color=(0, 0, 0)):
@@ -163,64 +188,99 @@ width, height = 800, 600
 screen = pygame.display.set_mode((width, height))
 
 
+# Загрузка изображений
+
+# Задний фон
 BACKGROUND = pygame.image.load('data/garage.jpg').convert_alpha()
 BACKGROUND = pygame.transform.scale(BACKGROUND, (width, height))
 BACKGROUND.set_colorkey((255, 255, 255))
 
+# Передний фон
 fon = pygame.image.load('data/fon.jpg').convert_alpha()
 fon = pygame.transform.scale(fon, (width, height))
 fon.set_colorkey((255, 255, 255))
+
+
+# Кнопки
+
+knopka = pygame.image.load('data/knopka2.png').convert_alpha()
+knopka = pygame.transform.scale(knopka, (150, 400))
+knopka.set_colorkey((255, 255, 255))
+
+knopka2 = pygame.image.load('data/knopka3.jpg').convert_alpha()
+knopka2 = pygame.transform.scale(knopka2, (150, 400))
+knopka2.set_colorkey((255, 255, 255))
+
+knopka3 = pygame.image.load('data/knopka.png').convert_alpha()
+knopka3 = pygame.transform.scale(knopka3, (150, 400))
+knopka3.set_colorkey((255, 255, 255))
+
 car1 = Cars('red_car', 'front')
 
-# Основной цикл программы
+# Управление циклом программы
 update = False
 running = True
 
 button_color = (255, 0, 0)
 
-all_sprites = pygame.sprite.Group()
-tool_group = pygame.sprite.Group()
-cursore_group = pygame.sprite.Group()
-
+# Кнопки переключения вида машины
 button_view1 = Button(screen, 110, 80, "scene2")
 button_view2 = Button(screen, 110, 80, "scene2")
 button_view3 = Button(screen, 110, 80, "scene2")
 button_view4 = Button(screen, 110, 80, "scene2")
-buttonScene1 = Button(screen, 250, 100, "scene2")
 
+# Кнопки лвлов
+button_lvl1 = Button(screen, 150, 400, "scene3")
+button_lvl2 = Button(screen, 150, 400, "scene3")
+button_lvl3 = Button(screen, 150, 400, "scene3")
+button_menu = Button(screen, 150, 50, "scene1")
+
+# Сцены
+buttonScene1 = Button(screen, 250, 100, "scene2")
+buttonScene2 = Button(screen, 250, 100, "scene3")
 current_scene = "scene1"
+
+# Группы спрайтов
+all_sprites = pygame.sprite.Group()
+tool_group = pygame.sprite.Group()
+cursore_group = pygame.sprite.Group()
+
+# Спрайты
 
 # Губка
 sponge = Sprite('sponge.png', 20, 50, (110, 110), tool_group, all_sprites)
-
 # Вытягиватель вмятин
 dent_puller = Sprite('dent_puller.png', 650, 25, (140, 140), tool_group, all_sprites)
-
 # Краска
 f_spray_paint = Sprite('f_spray_paint.png', 630, 290, (170, 170), tool_group, all_sprites)
-
 # Клей
 glue = Sprite('glue.png', 650, 170, (150, 150), tool_group, all_sprites)
-
 # Мастерок
 trowel = Sprite('trowel.png', 15, 175, (120, 120), tool_group, all_sprites)
 
 pos = 0
-
 cursor = Cursor(0, 0, cursore_group, all_sprites)
 
+# Запуск игры
 while running:
     for event in pygame.event.get():
+
+        # Проверка на выход
         if event.type == pygame.QUIT:
             running = False
+
+        # Проверка на нажатие кнопки мыши
         if event.type == pygame.MOUSEBUTTONDOWN:
             tool_group.update(event.pos, cursor, event.button)
 
+    # Переключение сцен
     if current_scene == "scene1":
         display_scene1()
     elif current_scene == 'scene2':
-        pygame.mouse.set_visible(0)
+        pygame.mouse.set_visible(1)
         display_scene2()
+    elif current_scene == 'scene3':
+        display_scene3()
 
     # Обновление экрана
     pygame.display.flip()

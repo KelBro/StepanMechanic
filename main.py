@@ -80,3 +80,5 @@ import pygame
 #         else:
 #             pygame.draw.rect(self.screen, self.ac, (x, y, self.w, self.h))
 #         printText(text, self.screen, self.w + (x // centerx), y + (self.h // centery)
+
+print(len('sdgfsghdf s'))
