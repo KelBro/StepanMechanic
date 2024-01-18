@@ -74,7 +74,6 @@ class Button:
         if action != 'change':
             self.ic = (98, 98, 98, 80)
             self.ac = (144, 144, 144)
-
         if x < mouse[0] < x + self.w:
             if y < mouse[1] < y + self.h:
                 if action == 'knopka' or action == 'knopka2' or action == 'knopka3':
@@ -84,7 +83,7 @@ class Button:
                     pygame.draw.rect(self.screen, self.ic, (x, y, self.w, self.h))
 
                 cars = ['teacher_car', 'red_car', 'white_car', 'yellow_car']
-                color_car = cars[1]
+                color_car = cars[3]
                 angle = 'front'
                 # car1 = Cars(color_car, angle)
                 if click[0] == 1:
@@ -92,36 +91,48 @@ class Button:
                         # soundd = pygame.mixer.Sound('supermegatreckotkotorogovsevahue.mp3')
                         # pygame.mixer.Sound.play(soundd)
                         current_scene = self.scene
+
                         # вид машины
-                    if action == 'View1':
+
+                    if action == 'View1':       # слева
                         angle = 'left'
                         if color_car == 'red_car':
                             to_defect = 'red_left'
-                        elif color_car == 'yellow_car':
-                            pass
                         elif color_car == 'white_car':
-                            pass
-                    elif action == 'View2':
+                            to_defect = 'white_left'
+                        elif color_car == 'yellow_car':
+                            to_defect = 'yellow_left'
+                        else:
+                            to_defect = 0
+
+                    elif action == 'View2':     # справа
                         angle = 'right'
                         to_defect = 0
                         if color_car == 'yellow_car':
-                            pass
-                    elif action == 'View3':
+                            to_defect = 'yellow_right'
+                        else:
+                            to_defect = 0
+
+                    elif action == 'View3':    # спереди
                         angle = 'front'
-                        if color_car == 'red_car':
-                            to_defect = 'red_front'
-                        elif color_car == 'teacher_car':
+                        if color_car == 'teacher_car':
                             to_defect = 'teacher_front'
-                    elif action == 'View4':
+                        elif color_car == 'red_car':
+                            to_defect = 'red_front'
+                        else:
+                            to_defect = 0
+
+                    elif action == 'View4':     # сзади
                         angle = 'back'
                         if color_car == 'yellow_car':
-                            pass
+                            to_defect = 'yellow_back'
                         elif color_car == 'white_car':
-                            pass
-                        to_defect = 0
-
-                    car1 = Cars(color_car, angle)
-                    car1.draw(screen)
+                            to_defect = 'white_back'
+                        else:
+                            to_defect = 0
+                    if action == 'View4' or action == 'View3' or action == 'View2' or action == 'View1':
+                        car1 = Cars(color_car, angle)
+                        car1.draw(screen)
 
             else:
                 if action != 'knopka' and action != 'knopka2' and action != 'knopka3':
@@ -130,13 +141,28 @@ class Button:
             if action != 'knopka' and action != 'knopka2' and action != 'knopka3':
                 pygame.draw.rect(self.screen, self.ac, (x, y, self.w, self.h))
         printText(text, self.screen, centerx, centery)
-        if to_defect == 'red_front' and action == 'View3':
-            red_front_group.draw(screen)
-        if to_defect == 'red_left' and action == 'View1':
-            red_left_group.draw(screen)
-        if to_defect == 'teacher_front' and action == 'View3':
-            # print(1, 2, 3)
-            teacher_front_group.draw(screen)
+        if action == 'View4' or action == 'View3' or action == 'View2' or action == 'View1':
+
+            if to_defect == 'red_left' and action == 'View1':
+                red_left_group.draw(screen)
+            if to_defect == 'white_left' and action == 'View1':
+                white_left_group.draw(screen)
+            if to_defect == 'yellow_left' and action == 'View1':
+                yellow_left_group.draw(screen)
+
+            if to_defect == 'yellow_right' and action == 'View2':
+                yellow_right_group.draw(screen)
+
+            if to_defect == 'teacher_front' and action == 'View3':
+                # print(1, 2, 3)
+                teacher_front_group.draw(screen)
+            if to_defect == 'red_front' and action == 'View3':
+                red_front_group.draw(screen)
+
+            if to_defect == 'white_back' and action == 'View4':
+                white_back_group.draw(screen)
+            if to_defect == 'yellow_back' and action == 'View4':
+                yellow_back_group.draw(screen)
 
 
 def photo(file, w, h, x, y):
@@ -185,6 +211,7 @@ def display_scene2():
 
     all_sprites.draw(screen)
     cursore_group.update(pygame.mouse.get_pos())
+    pygame.display.flip()
 
 
 def display_scene3():
@@ -250,28 +277,40 @@ button_color = (255, 0, 0)
 
 # группы дефектов для машин
 
-# красная машина
-red_left_group = pygame.sprite.Group()  # слева
-red_front_group = pygame.sprite.Group()  # справа
-#
-# # белая машина
-# white_left_group = pygame.sprite.Group()  # слева
-# white_back_group = pygame.sprite.Group()  # сзади
-#
-# # жёлтая машина
-# yellow_left_group = pygame.sprite.Group()  # слева
-# yellow_right_group = pygame.sprite.Group()  # справа
-# yellow_back_group = pygame.sprite.Group()  # сзади
-#
-# # тестовая машина машина
-teacher_front_group = pygame.sprite.Group()  # спереди
-
-
+# тестовая машина
+teacher_front_group = pygame.sprite.Group()  # спереди: грязь
 dirt = Sprite('dirt.png', 336, 400, (120, 80), teacher_front_group)
-rust1 = Sprite('rust.png', 336, 364, (115, 115), red_front_group)
-dirt1 = Sprite('dirt 1.png', 336, 364, (100, 100), red_left_group)
-to_defect = 'teacher_front'
 
+# красная машина
+red_left_group = pygame.sprite.Group()  # слева: грязь
+dirt1 = Sprite('dirt 1.png', 335, 350, (130, 100), red_left_group)
+
+red_front_group = pygame.sprite.Group()  # справа: ржавчина
+rust0 = Sprite('rust.png', 336, 364, (115, 115), red_front_group)
+# ground_coat = Sprite('ground coat0.png', 340, 354, (110, 90), red_front_group)
+
+# белая машина
+white_left_group = pygame.sprite.Group()  # слева:ржавчина
+rust1 = Sprite('rust1.png', 420, 374, (90, 90), white_left_group)
+ground_coat = Sprite('ground coat.png', 420, 374, (90, 90), white_left_group)
+
+white_back_group = pygame.sprite.Group()  # сзади: шина
+tire = Sprite('tire puncture.png', 290, 440, (35, 19), white_back_group)
+
+
+# жёлтая машина
+yellow_left_group = pygame.sprite.Group()  # слева: шина
+tire1 = Sprite('tire puncture.png', 499, 440, (35, 19), yellow_left_group)
+
+yellow_right_group = pygame.sprite.Group()  # справа:грязь
+dirt2 = Sprite('dirt.png', 336, 360, (120, 80), yellow_right_group)
+
+yellow_back_group = pygame.sprite.Group()  # сзади: ржавчина1
+rust2 = Sprite('rust1.png', 300, 334, (120, 120), yellow_back_group)
+ground_coat1 = Sprite('ground coat.png', 310, 334, (90, 90), yellow_back_group)
+
+
+to_defect = 'teacher_front'
 # Кнопки переключения вида машины
 button_view1 = Button(screen, 110, 80, "scene2")
 button_view2 = Button(screen, 110, 80, "scene2")
@@ -296,6 +335,7 @@ cursore_group = pygame.sprite.Group()
 
 # Спрайты
 
+
 # Губка
 sponge = Sprite('sponge.png', 20, 50, (110, 110), tool_group, all_sprites)
 # Вытягиватель вмятин
@@ -319,8 +359,9 @@ while running:
             running = False
 
         # Проверка на нажатие кнопки мыши
-        if event.type == pygame.MOUSEBUTTONDOWN:
-            tool_group.update(event.pos, cursor, event.button)
+        if current_scene == 'scene2':
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                tool_group.update(event.pos, cursor, event.button)
 
 
     # Переключение сцен
