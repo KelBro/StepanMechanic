@@ -1,3 +1,5 @@
+import time
+
 from cars import Cars
 import pygame
 
@@ -67,7 +69,7 @@ class Button:
         self.scene = scene
 
     def draw(self, x, y, text, centerx, centery, action=None):
-        global current_scene, car1, to_defect
+        global current_scene, car1, to_defect, flag_pause, is_running, start_time
         mouse = pygame.mouse.get_pos()
         click = pygame.mouse.get_pressed()
         surface = pygame.Surface((150, 400), pygame.SRCALPHA)
@@ -90,46 +92,56 @@ class Button:
                     if action == 'change':
                         # soundd = pygame.mixer.Sound('supermegatreckotkotorogovsevahue.mp3')
                         # pygame.mixer.Sound.play(soundd)
+
+                        if not flag_pause:
+                            flag_pause = True
+                        else:
+                            current_scene = self.scene
+                    elif action == 'menu':
                         current_scene = self.scene
+                        flag_pause = False
+                    elif action == 'resume':
+                        flag_pause = False
+                        is_running = True  # Запуск секундомера
+                        start_time = pygame.time.get_ticks() - elapsed_time
 
-                        # вид машины
+                    else:   # вид машины
+                        if action == 'View1':       # слева
+                            angle = 'left'
+                            if color_car == 'red_car':
+                                to_defect = 'red_left'
+                            elif color_car == 'white_car':
+                                to_defect = 'white_left'
+                            elif color_car == 'yellow_car':
+                                to_defect = 'yellow_left'
+                            else:
+                                to_defect = 0
 
-                    if action == 'View1':       # слева
-                        angle = 'left'
-                        if color_car == 'red_car':
-                            to_defect = 'red_left'
-                        elif color_car == 'white_car':
-                            to_defect = 'white_left'
-                        elif color_car == 'yellow_car':
-                            to_defect = 'yellow_left'
-                        else:
+                        elif action == 'View2':     # справа
+                            angle = 'right'
                             to_defect = 0
+                            if color_car == 'yellow_car':
+                                to_defect = 'yellow_right'
+                            else:
+                                to_defect = 0
 
-                    elif action == 'View2':     # справа
-                        angle = 'right'
-                        to_defect = 0
-                        if color_car == 'yellow_car':
-                            to_defect = 'yellow_right'
-                        else:
-                            to_defect = 0
+                        elif action == 'View3':    # спереди
+                            angle = 'front'
+                            if color_car == 'teacher_car':
+                                to_defect = 'teacher_front'
+                            elif color_car == 'red_car':
+                                to_defect = 'red_front'
+                            else:
+                                to_defect = 0
 
-                    elif action == 'View3':    # спереди
-                        angle = 'front'
-                        if color_car == 'teacher_car':
-                            to_defect = 'teacher_front'
-                        elif color_car == 'red_car':
-                            to_defect = 'red_front'
-                        else:
-                            to_defect = 0
-
-                    elif action == 'View4':     # сзади
-                        angle = 'back'
-                        if color_car == 'yellow_car':
-                            to_defect = 'yellow_back'
-                        elif color_car == 'white_car':
-                            to_defect = 'white_back'
-                        else:
-                            to_defect = 0
+                        elif action == 'View4':     # сзади
+                            angle = 'back'
+                            if color_car == 'yellow_car':
+                                to_defect = 'yellow_back'
+                            elif color_car == 'white_car':
+                                to_defect = 'white_back'
+                            else:
+                                to_defect = 0
                     if action == 'View4' or action == 'View3' or action == 'View2' or action == 'View1':
                         car1 = Cars(color_car, angle)
                         car1.draw(screen)
@@ -180,21 +192,31 @@ def photo(file, w, h, x, y):
 
 # Функция для отображения сцены 1
 def display_scene1():
+    global flag_pause, is_running, start_time, elapsed_time
     # Загрузка изображения для заднего фона
     photo('fon', width, height, 0, 0)
     draw_text(screen, 'СТЕПАН МЕХАНИК', 50, 200, 50)
     draw_text(screen, 'ВОЗРОЖДЕНИЕ', 50, 200, 100)
+    pygame.time.Clock().tick(25)
     buttonScene1.draw(250, 200, 'PLAY', 300, 220, 'change')
     buttonScene2.draw(250, 350, 'LEVELS', 300, 370, 'change')
+    is_running = True  # Запуск секундомера
+    start_time = pygame.time.get_ticks() - elapsed_time
+    elapsed_time = 0
     pygame.display.flip()
 
 
 # Функция для отображения сцены 2
 def display_scene2():
+    global is_running, start_time, elapsed_time
     # screen.fill((255, 255, 255))
     # Загрузка изображения для заднего фона
     photo('garage', width, height, 0, 0)
-
+    font = pygame.font.Font(None, 36)
+    if is_running:
+        elapsed_time = pygame.time.get_ticks() - start_time
+    text = font.render(f'Время: {elapsed_time // 1000}.{(elapsed_time % 1000) // 10} с', True, (0, 0, 0))
+    screen.blit(text, (width // 2 - text.get_width() // 2, 200))
     # Добавление полок для предметов
     pygame.draw.line(screen, (255, 255, 255), [10, 150], [150, 150], 4)
     pygame.draw.line(screen, (255, 255, 255), [10, 300], [150, 300], 4)
@@ -235,6 +257,30 @@ def draw_text(window, text, size, x, y, color=(0, 0, 0)):
     window.blit(text_surface, text_rect)
 
 
+def pause():
+    global flag_pause, last_click_time, is_running, start_time
+    is_running = False
+    flag_pause = True
+    surface = pygame.Surface((500, 300), pygame.SRCALPHA)
+    pygame.draw.rect(surface, (160, 123, 90, 230), surface.get_rect())
+    screen.blit(surface, (150, 150))
+    printText('PAUSE', screen, 325, 150)
+
+    while flag_pause:
+        for event in pygame.event.get():
+            # Проверка на выход
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                quit()
+        button_start.draw(220, 225, 'RESUME', 310, 225, 'resume')
+        button_meenu.draw(220, 330, 'MENU', 335, 330, 'menu')
+        keys = pygame.key.get_pressed()
+        if keys[pygame.K_SPACE]:
+            flag_pause = False
+        pygame.display.update()
+    pygame.time.Clock().tick(25)
+
+
 # Установка размеров окна
 width, height = 800, 600
 screen = pygame.display.set_mode((width, height))
@@ -252,7 +298,6 @@ fon = pygame.image.load('data/fon.jpg').convert_alpha()
 fon = pygame.transform.scale(fon, (width, height))
 fon.set_colorkey((255, 255, 255))
 
-
 # Кнопки
 
 knopka = pygame.image.load('data/knopka2.png').convert_alpha()
@@ -267,14 +312,14 @@ knopka3 = pygame.image.load('data/knopka.png').convert_alpha()
 knopka3 = pygame.transform.scale(knopka3, (150, 400))
 knopka3.set_colorkey((255, 255, 255))
 
-car1 = Cars('red_car', 'front')
+car1 = Cars('yellow_car', 'front')
 
 # Управление циклом программы
 update = False
 running = True
 
 button_color = (255, 0, 0)
-
+flag_pause = True
 # группы дефектов для машин
 
 # тестовая машина
@@ -328,13 +373,15 @@ buttonScene1 = Button(screen, 250, 100, "scene2")
 buttonScene2 = Button(screen, 250, 100, "scene3")
 current_scene = "scene1"
 
+button_start = Button(screen, 360, 80, "resumeP")
+button_meenu = Button(screen, 360, 80, "scene1")
+
 # Группы спрайтов
 all_sprites = pygame.sprite.Group()
 tool_group = pygame.sprite.Group()
 cursore_group = pygame.sprite.Group()
 
 # Спрайты
-
 
 # Губка
 sponge = Sprite('sponge.png', 20, 50, (110, 110), tool_group, all_sprites)
@@ -349,20 +396,25 @@ trowel = Sprite('trowel.png', 15, 175, (120, 120), tool_group, all_sprites)
 
 pos = 0
 cursor = Cursor(0, 0, cursore_group, all_sprites)
+last_click_time = 0
 
+is_running = True
+start_time = 0
+elapsed_time = 0
 # Запуск игры
 while running:
     for event in pygame.event.get():
-
         # Проверка на выход
         if event.type == pygame.QUIT:
             running = False
-
         # Проверка на нажатие кнопки мыши
         if current_scene == 'scene2':
             if event.type == pygame.MOUSEBUTTONDOWN:
                 tool_group.update(event.pos, cursor, event.button)
-
+    keys = pygame.key.get_pressed()
+    if keys[pygame.K_ESCAPE] and current_scene == 'scene2':
+        pause()
+        flag_pause = False
 
     # Переключение сцен
     if current_scene == "scene1":
