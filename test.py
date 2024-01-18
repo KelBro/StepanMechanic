@@ -1,5 +1,6 @@
 from cars import Cars
 import pygame
+
 # Инициализация Pygame
 pygame.init()
 
@@ -66,7 +67,7 @@ class Button:
         self.scene = scene
 
     def draw(self, x, y, text, centerx, centery, action=None):
-        global current_scene, car1
+        global current_scene, car1, to_defect
         mouse = pygame.mouse.get_pos()
         click = pygame.mouse.get_pressed()
         surface = pygame.Surface((150, 400), pygame.SRCALPHA)
@@ -82,24 +83,45 @@ class Button:
                 else:
                     pygame.draw.rect(self.screen, self.ic, (x, y, self.w, self.h))
 
+                cars = ['teacher_car', 'red_car', 'white_car', 'yellow_car']
+                color_car = cars[1]
+                angle = 'front'
+                # car1 = Cars(color_car, angle)
                 if click[0] == 1:
                     if action == 'change':
                         # soundd = pygame.mixer.Sound('supermegatreckotkotorogovsevahue.mp3')
                         # pygame.mixer.Sound.play(soundd)
                         current_scene = self.scene
                         # вид машины
-                    elif action == 'View1':
-                        car1 = Cars('red_car', 'left')
-                        car1.draw(screen)
+                    if action == 'View1':
+                        angle = 'left'
+                        if color_car == 'red_car':
+                            to_defect = 'red_left'
+                        elif color_car == 'yellow_car':
+                            pass
+                        elif color_car == 'white_car':
+                            pass
                     elif action == 'View2':
-                        car1 = Cars('red_car', 'right')
-                        car1.draw(screen)
+                        angle = 'right'
+                        to_defect = 0
+                        if color_car == 'yellow_car':
+                            pass
                     elif action == 'View3':
-                        car1 = Cars('red_car', 'front')
-                        car1.draw(screen)
+                        angle = 'front'
+                        if color_car == 'red_car':
+                            to_defect = 'red_front'
+                        elif color_car == 'teacher_car':
+                            to_defect = 'teacher_front'
                     elif action == 'View4':
-                        car1 = Cars('red_car', 'back')
-                        car1.draw(screen)
+                        angle = 'back'
+                        if color_car == 'yellow_car':
+                            pass
+                        elif color_car == 'white_car':
+                            pass
+                        to_defect = 0
+
+                    car1 = Cars(color_car, angle)
+                    car1.draw(screen)
 
             else:
                 if action != 'knopka' and action != 'knopka2' and action != 'knopka3':
@@ -108,13 +130,16 @@ class Button:
             if action != 'knopka' and action != 'knopka2' and action != 'knopka3':
                 pygame.draw.rect(self.screen, self.ac, (x, y, self.w, self.h))
         printText(text, self.screen, centerx, centery)
+        if to_defect == 'red_front' and action == 'View3':
+            red_front_group.draw(screen)
+        if to_defect == 'red_left' and action == 'View1':
+            red_left_group.draw(screen)
+        if to_defect == 'teacher_front' and action == 'View3':
+            # print(1, 2, 3)
+            teacher_front_group.draw(screen)
 
 
 def photo(file, w, h, x, y):
-    # file = 'data/' + file
-    # spray_paint = pygame.image.load(file).convert_alpha()
-    # spray_paint = pygame.transform.scale(spray_paint, (w, h))
-    # spray_paint.set_colorkey((255, 255, 255))
     if file == 'fon':
         screen.blit(fon, (x, y))
     elif file == 'knopka':
@@ -223,6 +248,30 @@ running = True
 
 button_color = (255, 0, 0)
 
+# группы дефектов для машин
+
+# красная машина
+red_left_group = pygame.sprite.Group()  # слева
+red_front_group = pygame.sprite.Group()  # справа
+#
+# # белая машина
+# white_left_group = pygame.sprite.Group()  # слева
+# white_back_group = pygame.sprite.Group()  # сзади
+#
+# # жёлтая машина
+# yellow_left_group = pygame.sprite.Group()  # слева
+# yellow_right_group = pygame.sprite.Group()  # справа
+# yellow_back_group = pygame.sprite.Group()  # сзади
+#
+# # тестовая машина машина
+teacher_front_group = pygame.sprite.Group()  # спереди
+
+
+dirt = Sprite('dirt.png', 336, 400, (120, 80), teacher_front_group)
+rust1 = Sprite('rust.png', 336, 364, (115, 115), red_front_group)
+dirt1 = Sprite('dirt 1.png', 336, 364, (100, 100), red_left_group)
+to_defect = 'teacher_front'
+
 # Кнопки переключения вида машины
 button_view1 = Button(screen, 110, 80, "scene2")
 button_view2 = Button(screen, 110, 80, "scene2")
@@ -272,6 +321,7 @@ while running:
         # Проверка на нажатие кнопки мыши
         if event.type == pygame.MOUSEBUTTONDOWN:
             tool_group.update(event.pos, cursor, event.button)
+
 
     # Переключение сцен
     if current_scene == "scene1":
