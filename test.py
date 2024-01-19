@@ -6,6 +6,43 @@ import pygame
 pygame.init()
 
 
+class AnimatedSprite(pygame.sprite.Sprite):
+    def __init__(self, image1, image2, x, y):
+        super().__init__(all_sprites2)
+        self.frames = []
+        self.cur_frame = 0
+        self.x = x
+        self.y = y
+
+        self.count = -1
+
+        self.image1 = pygame.image.load(image1)
+        self.image1 = pygame.transform.scale(self.image1, (80, 80))
+        self.image1.set_colorkey((255, 255, 255))
+
+        self.image2 = pygame.image.load(image2)
+        self.image2 = pygame.transform.scale(self.image2, (80, 80))
+        self.image2.set_colorkey((255, 255, 255))
+
+        self.frames.append(self.image1)
+        self.frames.append(self.image2)
+
+    def update(self):
+        if self.count == -1:
+            self.image = self.frames[self.cur_frame]
+            screen.blit(self.image, (self.x, self.y))
+        self.count += 1
+        if self.count == 35:
+            if not self.cur_frame:
+                self.cur_frame = 1
+            else:
+                self.cur_frame = 0
+            self.image = self.frames[self.cur_frame]
+            screen.blit(self.image, (self.x, self.y))
+            self.count = 0
+
+
+
 class Sprite(pygame.sprite.Sprite):
     def __init__(self, image_path, x, y, size=None, *group, alpha=256):
         super().__init__(*group)
@@ -75,10 +112,14 @@ class Button:
         self.ac = (23, 204, 58)
         self.scene = scene
 
-    def draw(self, x, y, text, centerx, centery, action=None):
-        global current_scene, car1, to_defect, flag_pause, is_running, start_time, color_car, cars, game_over__menu
+    def draw(self, x, y, text, centerx, centery, click, action=None):
+        global current_scene, car1, to_defect, flag_pause, is_running, start_time, flag_pause2, timeclick, b, elapsed_time, score, selected_level, color_car, cars, game_over__menu
         mouse = pygame.mouse.get_pos()
         click = pygame.mouse.get_pressed()
+        if click[0] and not timeclick:
+            timeclick = 1
+        elif not click[0]:
+            timeclick = 0
         surface = pygame.Surface((150, 400), pygame.SRCALPHA)
         if action != 'change':
             self.ic = (98, 98, 98, 80)
@@ -93,18 +134,37 @@ class Button:
                 else:
                     pygame.draw.rect(self.screen, self.ic, (x, y, self.w, self.h))
 
+                cars = ['teacher_car', 'red_car', 'white_car', 'yellow_car']
+                color_car = cars[0]
                 angle = 'front'
                 if click[0] == 1:
                     if action == 'change':
                         # soundd = pygame.mixer.Sound('supermegatreckotkotorogovsevahue.mp3')
                         # pygame.mixer.Sound.play(soundd)
-
+                        b = 0
                         current_scene = self.scene
                         game_over__menu = False
-
+                    elif action == 'knopka':
+                        selected_level = self.scene
+                        current_scene = 'scene2'
                     elif action == 'menu':
                         current_scene = self.scene
                         flag_pause = False
+                        flag_pause2 = False
+                        timeclick = 1
+                        b = 0
+                    elif action == 'continue':
+                        selected_level += 1
+                        score = 0
+                        start_time = pygame.time.get_ticks()
+                        elapsed_time = 0
+                        flag_pause2 = False
+                    elif action == 'restart':
+                        start_time = pygame.time.get_ticks()
+                        elapsed_time = 0
+                        flag_pause2 = False
+                        score = 0
+                        current_scene = self.scene
                     elif action == 'resume':
                         flag_pause = False
                         is_running = True  # Запуск секундомера
@@ -199,14 +259,16 @@ def photo(file, w, h, x, y):
 
 # Функция для отображения сцены 1
 def display_scene1():
-    global flag_pause, is_running, start_time, elapsed_time
+    global flag_pause, is_running, start_time, elapsed_time, b
     # Загрузка изображения для заднего фона
     photo('fon', width, height, 0, 0)
     draw_text(screen, 'СТЕПАН МЕХАНИК', 50, 200, 50)
     draw_text(screen, 'ВОЗРОЖДЕНИЕ', 50, 200, 100)
-    pygame.time.Clock().tick(25)
-    buttonScene1.draw(250, 200, 'PLAY', 300, 220, 'change')
-    buttonScene2.draw(250, 350, 'LEVELS', 300, 370, 'change')
+    buttonScene1.draw(250, 200, 'PLAY', 300, 220, click,  'change')
+    if b != 7:
+        b += 1
+    else:
+        buttonScene2.draw(250, 350, 'LEVELS', 300, 370, click,  'change')
     is_running = True  # Запуск секундомера
     start_time = pygame.time.get_ticks() - elapsed_time
     elapsed_time = 0
@@ -231,12 +293,17 @@ def display_scene2():
     pygame.draw.line(screen, (255, 255, 255), [650, 300], [790, 300], 4)
     pygame.draw.line(screen, (255, 255, 255), [650, 450], [790, 450], 4)
 
-    car1.draw(screen)
+    button_view1.draw(150, 20, 'Left', 170, 25, click, 'View1')
+    button_view2.draw(275, 20, 'Right', 285, 25, click, 'View2')
+    button_view3.draw(400, 20, 'Top', 430, 25, click, 'View3')
+    button_view4.draw(525, 20, 'Behind', 528, 25, click, 'View4')
 
-    button_view1.draw(150, 20, 'Left', 170, 25, 'View1')
-    button_view2.draw(275, 20, 'Right', 285, 25, 'View2')
-    button_view3.draw(400, 20, 'Top', 430, 25, 'View3')
-    button_view4.draw(525, 20, 'Behind', 528, 25, 'View4')
+    if selected_level == 1:
+        car1.draw(screen)
+    elif selected_level == 2:
+        pass
+    elif selected_level == 3:
+        pass
 
     # проверка на уровень
 
@@ -258,16 +325,30 @@ def display_scene2():
 
 
 def display_scene3():
+    global b
     screen.fill((200, 220, 220))
 
     photo('knopka', 150, 400, 100, 120)
     photo('knopka2', 150, 400, 350, 120)
     photo('knopka3', 150, 400, 575, 120)
 
-    button_lvl1.draw(100, 120, 'ONE', 125, 250, 'knopka')
-    button_lvl2.draw(350, 120, 'TWO', 375, 250, 'knopka2')
-    button_lvl3.draw(575, 120, 'THREE', 580, 250, 'knopka3')
-    button_menu.draw(10, 10, 'MENU', 20, 6, 'change')
+    button_lvl1.draw(100, 120, 'ONE', 125, 250, click, 'knopka')
+    if maxlvl == 2:
+        if b != 7:
+            b += 1
+        else:
+            button_lvl2.draw(350, 120, 'TWO', 375, 250, click, 'knopka')
+        pygame.draw.rect(screen, (98, 98, 98), (575, 120, 150, 400))
+        draw_text(screen, 'LOCKED', 30, 600, 275, (255, 0, 0))
+    elif maxlvl == 3:
+        button_lvl2.draw(350, 120, 'TWO', 375, 250, click, 'knopka')
+        button_lvl3.draw(575, 120, 'THREE', 580, 250, click, 'knopka')
+    else:
+        pygame.draw.rect(screen, (98, 98, 98), (350, 120, 150, 400))
+        pygame.draw.rect(screen, (98, 98, 98), (575, 120, 150, 400))
+        draw_text(screen, 'LOCKED', 30, 375, 275, (255, 0, 0))
+        draw_text(screen, 'LOCKED', 30, 600, 275, (255, 0, 0))
+    button_menu.draw(10, 10, 'MENU', 20, 6, click, 'change')
 
 
 def end_game_screen():
@@ -316,6 +397,35 @@ def draw_text(window, text, size, x, y, color=(0, 0, 0)):
     window.blit(text_surface, text_rect)
 
 
+def game_over1():
+    global flag_pause2, click, maxlvl
+    surface = pygame.Surface((500, 300), pygame.SRCALPHA)
+    pygame.draw.rect(surface, (206, 209, 205, 245), surface.get_rect())
+    screen.blit(surface, (150, 150))
+    printText('GAME_OVER', screen, 325, 150)
+    flag_pause2 = True
+    if selected_level > maxlvl:
+        maxlvl += 1
+    while flag_pause2:
+        for event in pygame.event.get():
+            # Проверка на выход
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                quit()
+        button_restart.draw(180, 225, 'RESTART', 180, 225, click, 'restart')
+        button_continue.draw(420, 330, 'NEXT', 465, 330, click, 'continue')
+        buttonmenu.draw(180, 330, 'MENU', 210, 330, click, 'menu')
+        print(elapsed_time)
+        if elapsed_time < 5000:
+            gold.update()
+        elif elapsed_time < 10000:
+            silver.update()
+        else:
+            bronza.update()
+        pygame.display.update()
+    click = (False, False, False)
+
+
 def pause():
     global flag_pause, last_click_time, is_running, start_time
     is_running = False
@@ -331,13 +441,10 @@ def pause():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 quit()
-        button_start.draw(220, 225, 'RESUME', 310, 225, 'resume')
-        button_meenu.draw(220, 330, 'MENU', 335, 330, 'menu')
-        keys = pygame.key.get_pressed()
-        if keys[pygame.K_SPACE]:
-            flag_pause = False
+        button_start.draw(220, 225, 'RESUME', 310, 225, click, 'resume')
+        button_meenu.draw(220, 330, 'MENU', 335, 330, click, 'menu')
+        keyss = pygame.key.get_pressed()
         pygame.display.update()
-    pygame.time.Clock().tick(25)
 
 
 # Установка размеров окна
@@ -363,33 +470,66 @@ game_over_fon .set_colorkey((255, 255, 255))
 
 # Кнопки
 
+# Дизайн в меню Лвлов
+
+# 1 лвл
 knopka = pygame.image.load('data/knopka2.png').convert_alpha()
 knopka = pygame.transform.scale(knopka, (150, 400))
 knopka.set_colorkey((255, 255, 255))
 
+# 2 лвл
 knopka2 = pygame.image.load('data/knopka3.jpg').convert_alpha()
 knopka2 = pygame.transform.scale(knopka2, (150, 400))
 knopka2.set_colorkey((255, 255, 255))
 
+# 3 лвл
 knopka3 = pygame.image.load('data/knopka.png').convert_alpha()
 knopka3 = pygame.transform.scale(knopka3, (150, 400))
 knopka3.set_colorkey((255, 255, 255))
+
+
+# Кнопки в сцене 2
 
 car1 = Cars('yellow_car', 'front')
 cars = ['teacher_car', 'red_car', 'white_car', 'yellow_car']
 lvl = 'тренировочный уровень'
 
-# Управление циклом программы
-update = False
-running = True
+# Кнопки переключения вида машины
+button_view1 = Button(screen, 110, 80, "scene2")
+button_view2 = Button(screen, 110, 80, "scene2")
+button_view3 = Button(screen, 110, 80, "scene2")
+button_view4 = Button(screen, 110, 80, "scene2")
 
-button_color = (255, 0, 0)
-flag_pause = True
+
+# Кнопки в лвлах
 
 clock = pygame.time.Clock()
 
 current_group = pygame.sprite.Group()
 group_changes = False
+
+# Кнопки лвлов
+button_lvl1 = Button(screen, 150, 400, 1)
+button_lvl2 = Button(screen, 150, 400, 2)
+button_lvl3 = Button(screen, 150, 400, 3)
+button_menu = Button(screen, 150, 50, "scene1")
+
+# Кнопки в сцене 1
+
+# Сцены
+buttonScene1 = Button(screen, 250, 100, "scene2")
+buttonScene2 = Button(screen, 250, 100, "scene3")
+current_scene = "scene1"
+
+# Пауза
+button_start = Button(screen, 360, 80, "resumeP")
+button_meenu = Button(screen, 360, 80, "scene1")
+
+# Промежуточное окно
+buttonmenu = Button(screen, 200, 80, "scene1")
+button_restart = Button(screen, 200, 80, "scene2")
+button_continue = Button(screen, 200, 80, "next")
+
 
 # группы дефектов для машин
 defect_group = []
@@ -436,28 +576,9 @@ defect_group.append(yellow_back_group)
 # стартовый вид машины
 to_defect = 'teacher_front'
 
-# Кнопки переключения вида машины
-button_view1 = Button(screen, 110, 80, "scene2")
-button_view2 = Button(screen, 110, 80, "scene2")
-button_view3 = Button(screen, 110, 80, "scene2")
-button_view4 = Button(screen, 110, 80, "scene2")
-
-# Кнопки лвлов
-button_lvl1 = Button(screen, 150, 400, "scene3")
-button_lvl2 = Button(screen, 150, 400, "scene3")
-button_lvl3 = Button(screen, 150, 400, "scene3")
-button_menu = Button(screen, 150, 50, "scene1")
-
-# Сцены
-buttonScene1 = Button(screen, 250, 100, "scene2")
-buttonScene2 = Button(screen, 250, 100, "scene3")
-current_scene = "scene1"
-
-button_start = Button(screen, 360, 80, "resumeP")
-button_meenu = Button(screen, 360, 80, "scene1")
-
 # Группы спрайтов
 all_sprites = pygame.sprite.Group()
+all_sprites2 = pygame.sprite.Group()
 tool_group = pygame.sprite.Group()
 cursore_group = pygame.sprite.Group()
 
@@ -473,6 +594,16 @@ f_spray_paint = Sprite('f_spray_paint.png', 630, 290, (170, 170), tool_group, al
 glue = Sprite('glue.png', 650, 170, (150, 150), tool_group, all_sprites)
 # Мастерок
 trowel = Sprite('trowel.png', 15, 175, (120, 120), tool_group, all_sprites)
+
+
+# Назначение машины
+
+# Управление циклом программы
+update = False
+running = True
+flag_pause = True
+
+button_color = (255, 0, 0)
 
 # приспособление инструментов
 usage = {
@@ -497,10 +628,21 @@ last_click_time = 0
 #         yellow_back_group: 7
 #         }
 
-game_over__menu = True
+flag_pause2 = True
 is_running = True
 start_time = 0
 elapsed_time = 0
+score = 0
+selected_level = 1
+click = (False, False, False)
+b = 7
+maxlvl = 1
+# Звёзды
+
+gold = AnimatedSprite('data/star_gold.png', 'data/star_gold_state2.png', 470, 225)
+silver = AnimatedSprite('data/star_silver.png', 'data/star_silver_state2.png', 470, 225)
+bronza = AnimatedSprite('data/star_bronza.png', 'data/star_bronza_state2.png', 470, 225)
+timeclick = 0
 # Запуск игры
 while running:
     change_alpha = False
@@ -528,6 +670,8 @@ while running:
                 elif event.type == pygame.MOUSEBUTTONUP:
                     if event.button == 1:
                         change_alpha = False
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                click = pygame.mouse.get_pressed()
 
             # screen.fill()
             # Обновление и отрисовка спрайтов в текущей группе
@@ -542,6 +686,12 @@ while running:
         if keys[pygame.K_ESCAPE] and current_scene == 'scene2':
             pause()
             flag_pause = False
+        elif score == 18 and current_scene == 'scene2':
+            game_over1()
+            score = 0
+            flag_pause = False
+        elif keys[pygame.K_0]:
+            score += 1
 
         # Переключение сцен
         if current_scene == "scene1":
@@ -554,6 +704,7 @@ while running:
 
         # Обновление экрана
         pygame.display.flip()
+        click = (False, False, False)
 
     end_game_screen()
 
@@ -563,6 +714,6 @@ while running:
     #             pygame.quit()
     #             sys.exit()
 
-    pygame.display.flip()
+
 # Завершение работы Pygame
 pygame.quit()
