@@ -1,3 +1,4 @@
+import sqlite3
 from cars import Cars
 import pygame
 
@@ -75,7 +76,7 @@ class Button:
         self.scene = scene
 
     def draw(self, x, y, text, centerx, centery, action=None):
-        global current_scene, car1, to_defect, flag_pause, is_running, start_time, color_car, cars
+        global current_scene, car1, to_defect, flag_pause, is_running, start_time, color_car, cars, game_over__menu
         mouse = pygame.mouse.get_pos()
         click = pygame.mouse.get_pressed()
         surface = pygame.Surface((150, 400), pygame.SRCALPHA)
@@ -98,10 +99,9 @@ class Button:
                         # soundd = pygame.mixer.Sound('supermegatreckotkotorogovsevahue.mp3')
                         # pygame.mixer.Sound.play(soundd)
 
-                        if not flag_pause:
-                            flag_pause = True
-                        else:
-                            current_scene = self.scene
+                        current_scene = self.scene
+                        game_over__menu = False
+
                     elif action == 'menu':
                         current_scene = self.scene
                         flag_pause = False
@@ -191,6 +191,8 @@ def photo(file, w, h, x, y):
         screen.blit(knopka2, (x, y))
     elif file == 'knopka3':
         screen.blit(knopka3, (x, y))
+    elif file == 'game_over':
+        screen.blit(game_over_fon, (x, y))
     else:
         screen.blit(BACKGROUND, (x, y))
 
@@ -268,6 +270,44 @@ def display_scene3():
     button_menu.draw(10, 10, 'MENU', 20, 6, 'change')
 
 
+def end_game_screen():
+    global button_menu, game_over__menu
+    game_over = False       # Секретная концовка - False, Выигрыш - True
+
+    con = sqlite3.connect('StepanMechanic.sqlite')
+    cur = con.cursor()
+    result = cur.execute("""SELECT finished FROM save_game 
+    WHERE finished == 3""").fetchall()
+    n = 0
+    for elem in result:
+        if elem[0] == 3:
+            n += 1
+    if n != 3:
+        game_over = True
+    con.close()
+    screen.fill([0, 0, 0])
+    if game_over:
+        printText('You Win', screen, 200, 150, [255, 255, 0], 'PressStart2PRegular.ttf', 50)
+    else:
+        photo('game_over', width, height, 0, 0)
+
+        printText('!!You Win!!', screen,  70, 440, [255, 0, 0], 'PressStart2PRegular.ttf', 60)
+        printText('Кчау', screen,  40, 240, [255, 0, 0], 'PressStart2PRegular.ttf', 10)
+
+    game_over__menu = True
+    while game_over__menu:
+        for event in pygame.event.get():
+            # Проверка на выход
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                quit()
+        # Переход в главное меню
+        button_menu.draw(10, 10, 'MENU', 20, 6, 'change')
+        # keys = pygame.key.get_pressed()
+        pygame.display.update()
+    pygame.display.flip()
+
+
 def draw_text(window, text, size, x, y, color=(0, 0, 0)):
     font = pygame.font.SysFont('Arial', size)
     text_surface = font.render(text, True, color)
@@ -315,6 +355,11 @@ BACKGROUND.set_colorkey((255, 255, 255))
 fon = pygame.image.load('data/fon.jpg').convert_alpha()
 fon = pygame.transform.scale(fon, (width, height))
 fon.set_colorkey((255, 255, 255))
+
+# Фон секретной концовки
+game_over_fon = pygame.image.load('data/game_over.jpg').convert_alpha()
+game_over_fon = pygame.transform.scale(game_over_fon, (width, height))
+game_over_fon .set_colorkey((255, 255, 255))
 
 # Кнопки
 
@@ -452,56 +497,72 @@ last_click_time = 0
 #         yellow_back_group: 7
 #         }
 
+game_over__menu = True
 is_running = True
 start_time = 0
 elapsed_time = 0
 # Запуск игры
 while running:
     change_alpha = False
-    for event in pygame.event.get():
-        # Проверка на выход
-        if event.type == pygame.QUIT:
-            running = False
-        # Проверка на нажатие кнопки мыши
+    game_over = False
 
-        if current_scene == 'scene2':
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                tool_group.update(event.pos, cursor, event.button)
-                if event.button == 1:
-                    for index, group in enumerate(defect_group):
-                        for sprite in group:
-                            if sprite.rect.collidepoint(event.pos):
-                                current_group = group
-                                change_alpha = True
-            elif event.type == pygame.MOUSEBUTTONUP:
-                if event.button == 1:
-                    change_alpha = False
+    while not game_over:
+        for event in pygame.event.get():
+            # Проверка на выход
+            if event.type == pygame.QUIT:
+                running = False
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_LSHIFT:
+                    game_over = True
+            # Проверка на нажатие кнопки мыши
 
-        # screen.fill()
-        # Обновление и отрисовка спрайтов в текущей группе
+            if current_scene == 'scene2':
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    tool_group.update(event.pos, cursor, event.button)
+                    if event.button == 1:
+                        for index, group in enumerate(defect_group):
+                            for sprite in group:
+                                if sprite.rect.collidepoint(event.pos):
+                                    current_group = group
+                                    change_alpha = True
+                elif event.type == pygame.MOUSEBUTTONUP:
+                    if event.button == 1:
+                        change_alpha = False
 
-        # current_group.sprites()[0].update_defects(change_alpha)
-        # print(defect_group[current_group])
+            # screen.fill()
+            # Обновление и отрисовка спрайтов в текущей группе
 
+            # current_group.sprites()[0].update_defects(change_alpha)
+            # print(defect_group[current_group])
+
+            pygame.display.flip()
+            clock.tick(60)  # Ограничение FPS
+
+        keys = pygame.key.get_pressed()
+        if keys[pygame.K_ESCAPE] and current_scene == 'scene2':
+            pause()
+            flag_pause = False
+
+        # Переключение сцен
+        if current_scene == "scene1":
+            display_scene1()
+        elif current_scene == 'scene2':
+            pygame.mouse.set_visible(1)
+            display_scene2()
+        elif current_scene == 'scene3':
+            display_scene3()
+
+        # Обновление экрана
         pygame.display.flip()
-        clock.tick(60)  # Ограничение FPS
 
-    keys = pygame.key.get_pressed()
-    if keys[pygame.K_ESCAPE] and current_scene == 'scene2':
-        pause()
-        flag_pause = False
+    end_game_screen()
 
-    # Переключение сцен
-    if current_scene == "scene1":
-        display_scene1()
-    elif current_scene == 'scene2':
-        pygame.mouse.set_visible(1)
-        display_scene2()
-    elif current_scene == 'scene3':
-        display_scene3()
+    # while game_over:
+    #     for event in pygame.event.get():
+    #         if event.type == pygame.QUIT:
+    #             pygame.quit()
+    #             sys.exit()
 
-    # Обновление экрана
     pygame.display.flip()
-
 # Завершение работы Pygame
 pygame.quit()
