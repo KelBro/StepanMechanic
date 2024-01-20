@@ -33,6 +33,7 @@ teacher_car = {
 class Cars:
     def __init__(self, file, angle, hover_image_path=None):
         cars = []
+        self.file = file
         car = []
         angles = ['front', 'back', 'left', 'right']
         if angle in angles:

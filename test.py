@@ -44,8 +44,11 @@ class AnimatedSprite(pygame.sprite.Sprite):
 
 
 class Sprite(pygame.sprite.Sprite):
-    def __init__(self, image_path, x, y, size=None, *group, alpha=256):
+    def __init__(self, image_path, x, y, tool_type, car_type, size=None, *group, alpha=256):
         super().__init__(*group)
+        self.tool_type = tool_type
+        self.car_type = car_type
+        self.type = type
         image_path = 'data/' + image_path
         self.image_orig = pygame.image.load(image_path)
         self.image_orig.set_colorkey([0, 0, 0])
@@ -62,6 +65,7 @@ class Sprite(pygame.sprite.Sprite):
         if button != 3:
             if self.rect.collidepoint(pos):
                 cursor.image = self.image
+                cursor.tool = self.tool_type
                 # if sponge.image == self.image:
                 #     print(self.image)
 
@@ -76,6 +80,8 @@ class Sprite(pygame.sprite.Sprite):
                 self.image.set_alpha(new_alpha)
 
 
+
+
 class Cursor(pygame.sprite.Sprite):
 
     def __init__(self, x, y, *group):
@@ -86,6 +92,7 @@ class Cursor(pygame.sprite.Sprite):
         self.rect.x = x
         self.rect.y = y
         self.size = self.image.get_size()
+        self.tool = 'sponge'
 
     def update(self, pos):
         if self.image != self.img:
@@ -135,7 +142,7 @@ class Button:
                     pygame.draw.rect(self.screen, self.ic, (x, y, self.w, self.h))
 
                 cars = ['teacher_car', 'red_car', 'white_car', 'yellow_car']
-                color_car = cars[0]
+                # color_car = cars[0]
                 angle = 'front'
                 if click[0] == 1:
                     if action == 'change':
@@ -299,7 +306,8 @@ def display_scene2():
     button_view4.draw(525, 20, 'Behind', 528, 25, click, 'View4')
 
     if selected_level == 1:
-        car1.draw(screen)
+        # car1.draw(screen)
+        pass
     elif selected_level == 2:
         pass
     elif selected_level == 3:
@@ -341,7 +349,10 @@ def display_scene3():
         pygame.draw.rect(screen, (98, 98, 98), (575, 120, 150, 400))
         draw_text(screen, 'LOCKED', 30, 600, 275, (255, 0, 0))
     elif maxlvl == 3:
-        button_lvl2.draw(350, 120, 'TWO', 375, 250, click, 'knopka')
+        if b != 7:
+            b += 1
+        else:
+            button_lvl2.draw(350, 120, 'TWO', 375, 250, click, 'knopka')
         button_lvl3.draw(575, 120, 'THREE', 580, 250, click, 'knopka')
     else:
         pygame.draw.rect(screen, (98, 98, 98), (350, 120, 150, 400))
@@ -383,7 +394,7 @@ def end_game_screen():
                 pygame.quit()
                 quit()
         # Переход в главное меню
-        button_menu.draw(10, 10, 'MENU', 20, 6, 'change')
+        button_menu.draw(10, 10, 'MENU', 20, 6, click, 'change')
         # keys = pygame.key.get_pressed()
         pygame.display.update()
     pygame.display.flip()
@@ -416,8 +427,14 @@ def game_over1():
         button_continue.draw(420, 330, 'NEXT', 465, 330, click, 'continue')
         buttonmenu.draw(180, 330, 'MENU', 210, 330, click, 'menu')
         print(elapsed_time)
+
+        con = sqlite3.connect('StepanMechanic.sqlite')
+        cur = con.cursor()
+
         if elapsed_time < 5000:
             gold.update()
+            result = cur.execute(f"""UPDATE save_game
+    SET duration = duration * 2""").fetchall()
         elif elapsed_time < 10000:
             silver.update()
         else:
@@ -446,6 +463,8 @@ def pause():
         keyss = pygame.key.get_pressed()
         pygame.display.update()
 
+
+cars = ['teacher_car', 'red_car', 'white_car', 'yellow_car']
 
 # Установка размеров окна
 width, height = 800, 600
@@ -490,7 +509,7 @@ knopka3.set_colorkey((255, 255, 255))
 
 # Кнопки в сцене 2
 
-car1 = Cars('yellow_car', 'front')
+car1 = Cars('teacher_car', 'front')
 cars = ['teacher_car', 'red_car', 'white_car', 'yellow_car']
 lvl = 'тренировочный уровень'
 
@@ -501,12 +520,6 @@ button_view3 = Button(screen, 110, 80, "scene2")
 button_view4 = Button(screen, 110, 80, "scene2")
 
 
-# Кнопки в лвлах
-
-clock = pygame.time.Clock()
-
-current_group = pygame.sprite.Group()
-group_changes = False
 
 # Кнопки лвлов
 button_lvl1 = Button(screen, 150, 400, 1)
@@ -530,70 +543,69 @@ buttonmenu = Button(screen, 200, 80, "scene1")
 button_restart = Button(screen, 200, 80, "scene2")
 button_continue = Button(screen, 200, 80, "next")
 
-
-# группы дефектов для машин
-defect_group = []
-
-# тестовая машина
-teacher_front_group = pygame.sprite.Group()  # спереди: грязь
-dirt = Sprite('dirt.png', 336, 400, (120, 80), teacher_front_group)
-defect_group.append(teacher_front_group)
-
-# красная машина
-red_left_group = pygame.sprite.Group(defect_group)  # слева: грязь
-dirt1 = Sprite('dirt 1.png', 335, 350, (130, 100), red_left_group)
-defect_group.append(red_left_group)
-
-red_front_group = pygame.sprite.Group(defect_group)  # справа: ржавчина
-rust0 = Sprite('rust.png', 336, 364, (115, 115), red_front_group)
-# ground_coat = Sprite('ground coat0.png', 340, 354, (110, 90), red_front_group)
-defect_group.append(red_front_group)
-
-# белая машина
-white_left_group = pygame.sprite.Group(defect_group)  # слева:ржавчина
-rust1 = Sprite('rust1.png', 420, 374, (90, 90), white_left_group)
-ground_coat = Sprite('ground coat.png', 420, 374, (90, 90), white_left_group)
-defect_group.append(white_left_group)
-
-white_back_group = pygame.sprite.Group(defect_group)  # сзади: шина
-tire = Sprite('tire puncture.png', 290, 440, (35, 19), white_back_group)
-defect_group.append(white_back_group)
-
-# жёлтая машина
-yellow_left_group = pygame.sprite.Group(defect_group)  # слева: шина
-tire1 = Sprite('tire puncture.png', 499, 440, (35, 19), yellow_left_group)
-defect_group.append(yellow_left_group)
-
-yellow_right_group = pygame.sprite.Group(defect_group)  # справа:грязь
-dirt2 = Sprite('dirt.png', 336, 360, (120, 80), yellow_right_group)
-defect_group.append(yellow_right_group)
-
-yellow_back_group = pygame.sprite.Group(defect_group)  # сзади: ржавчина1
-rust2 = Sprite('rust1.png', 300, 334, (120, 120), yellow_back_group)
-ground_coat1 = Sprite('ground coat.png', 310, 334, (90, 90), yellow_back_group)
-defect_group.append(yellow_back_group)
-
-# стартовый вид машины
-to_defect = 'teacher_front'
-
 # Группы спрайтов
 all_sprites = pygame.sprite.Group()
 all_sprites2 = pygame.sprite.Group()
 tool_group = pygame.sprite.Group()
 cursore_group = pygame.sprite.Group()
 
+# стартовый вид машины
+to_defect = 'teacher_front'
 # Спрайты
 
 # Губка
-sponge = Sprite('sponge.png', 20, 50, (110, 110), tool_group, all_sprites)
+sponge = Sprite('sponge.png', 20, 50, 'sponge',None, (110, 110), tool_group, all_sprites)
 # Вытягиватель вмятин
-dent_puller = Sprite('dent_puller.png', 650, 25, (140, 140), tool_group, all_sprites)
+dent_puller = Sprite('dent_puller.png', 650, 25, 'dent_puller', None, (140, 140), tool_group, all_sprites)
 # Краска
-f_spray_paint = Sprite('f_spray_paint.png', 630, 290, (170, 170), tool_group, all_sprites)
+f_spray_paint = Sprite('f_spray_paint.png', 630, 290, 'f_spray_paint', None, (170, 170), tool_group, all_sprites)
 # Клей
-glue = Sprite('glue.png', 650, 170, (150, 150), tool_group, all_sprites)
+glue = Sprite('glue.png', 650, 170, 'glue', None, (150, 150), tool_group, all_sprites)
 # Мастерок
-trowel = Sprite('trowel.png', 15, 175, (120, 120), tool_group, all_sprites)
+trowel = Sprite('trowel.png', 15, 175, 'trowel', None, (120, 120), tool_group, all_sprites)
+
+# группы дефектов для машин
+defect_group = []
+
+# тестовая машина
+teacher_front_group = pygame.sprite.Group()  # спереди: грязь
+dirt = Sprite('dirt.png', 336, 400, 'sponge', 'teacher_front', (120, 80), teacher_front_group)
+defect_group.append(teacher_front_group)
+
+# красная машина
+red_left_group = pygame.sprite.Group(defect_group)  # слева: грязь
+dirt1 = Sprite('dirt 1.png', 335, 350, 'sponge''', 'red_left', (130, 100), red_left_group)
+defect_group.append(red_left_group)
+
+red_front_group = pygame.sprite.Group(defect_group)  # справа: ржавчина
+rust0 = Sprite('rust.png', 336, 364, 'trowel', 'red_front', (115, 115), red_front_group)
+ground_coat = Sprite('ground coat.png', 340, 354, 'red_front', f_spray_paint, (110, 90), red_front_group)
+defect_group.append(red_front_group)
+
+# белая машина
+white_left_group = pygame.sprite.Group(defect_group)  # слева:ржавчина
+rust1 = Sprite('rust1.png', 420, 374, 'trowel', 'white_left', (90, 90), white_left_group)
+ground_coat2 = Sprite('ground coat.png', 420, 374, 'white_left', f_spray_paint, (90, 90), white_left_group)
+defect_group.append(white_left_group)
+
+white_back_group = pygame.sprite.Group(defect_group)  # сзади: шина
+tire = Sprite('tire puncture.png', 290, 440, 'glue',  'white_back', (35, 19), white_back_group)
+defect_group.append(white_back_group)
+
+# жёлтая машина
+yellow_left_group = pygame.sprite.Group(defect_group)  # слева: шина
+tire1 = Sprite('tire puncture.png', 499, 440, 'glue', 'yellow_left', (35, 19), yellow_left_group)
+defect_group.append(yellow_left_group)
+
+yellow_right_group = pygame.sprite.Group(defect_group)  # справа:грязь
+dirt2 = Sprite('dirt.png', 336, 360, 'sponge', 'yellow_right', (120, 80), yellow_right_group)
+defect_group.append(yellow_right_group)
+
+yellow_back_group = pygame.sprite.Group(defect_group)  # сзади: ржавчина1
+rust2 = Sprite('rust1.png', 300, 334, 'trowel', 'yellow_back', (120, 120), yellow_back_group)
+ground_coat1 = Sprite('ground coat.png', 310, 334, 'f_spray_paint', 'yellow_back', (90, 90), yellow_back_group)
+defect_group.append(yellow_back_group)
+
 
 
 # Назначение машины
@@ -606,12 +618,12 @@ flag_pause = True
 button_color = (255, 0, 0)
 
 # приспособление инструментов
-usage = {
-    sponge.image: (dirt, dirt1),
-    trowel.image: (rust0, rust0, rust2),
-    glue.image: (tire, tire1),
-    f_spray_paint: (ground_coat, ground_coat1)
-}
+# usage = {
+#     sponge.image: (dirt, dirt1),
+#     trowel.image: (rust0, rust0, rust2),
+#     glue.image: (tire, tire1),
+#     f_spray_paint: (ground_coat, ground_coat1)
+# }
 
 pos = 0
 cursor = Cursor(0, 0, cursore_group, all_sprites)
@@ -627,7 +639,11 @@ last_click_time = 0
 #         yellow_right_group: 6,
 #         yellow_back_group: 7
 #         }
+clock = pygame.time.Clock()
 
+current_group = pygame.sprite.Group()
+current_s = sponge
+group_changes = False
 flag_pause2 = True
 is_running = True
 start_time = 0
@@ -664,9 +680,25 @@ while running:
                     if event.button == 1:
                         for index, group in enumerate(defect_group):
                             for sprite in group:
-                                if sprite.rect.collidepoint(event.pos):
-                                    current_group = group
-                                    change_alpha = True
+                                if sprite.tool_type == cursor.tool and sprite.car_type == to_defect:
+                                    if sprite.rect.collidepoint(event.pos):
+                                        print('alpha')
+                                        current_group = group
+                                        current_s = sprite
+                                        change_alpha = True
+                                        current_s.update_defects(change_alpha)
+                                        # current_group.draw(screen)
+
+                                        if to_defect == 'teacher_front':
+                                            teacher_front_group.draw(screen)
+                                        elif to_defect == 'red_left':
+                                            red_left_group.draw(screen)
+                                        elif to_defect == 'red_front':
+                                            red_front_group.draw(screen)
+                                        # elif to_defect == 'teacher_front':
+                                        #     teacher_front_group.draw(screen)
+
+
                 elif event.type == pygame.MOUSEBUTTONUP:
                     if event.button == 1:
                         change_alpha = False
@@ -675,8 +707,9 @@ while running:
 
             # screen.fill()
             # Обновление и отрисовка спрайтов в текущей группе
+            # current_group.draw(screen)
 
-            # current_group.sprites()[0].update_defects(change_alpha)
+            # current_sprite.update_defects(change_alpha)
             # print(defect_group[current_group])
 
             pygame.display.flip()
