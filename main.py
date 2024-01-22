@@ -3,6 +3,7 @@
 import pygame  # импорт библиотеки PyGame
 # import sys
 from button import ImageButton
+from cars import Cars
 
 pygame.init()  # инициализируем PyGame
 
@@ -11,6 +12,8 @@ HEIGHT = 600  # высота экрана
 
 screen = pygame.display.set_mode((WIDTH, HEIGHT))  # создаем поверхность экрана
 pygame.display.set_caption("StepanMechanic")
+
+"""Изображения"""
 # Фон меню
 fon = pygame.image.load('data/fon.jpg').convert_alpha()
 fon = pygame.transform.scale(fon, (WIDTH, HEIGHT))
@@ -40,6 +43,13 @@ left_button = ImageButton(WIDTH * 4/8, 15, 170, 70, "Left", "btn01.png", "btn02.
 right_button = ImageButton(WIDTH * 5.5/8 + 5, 15, 170, 70, "Right", "btn01.png", "btn02.png", "click.mp3")
 
 
+# список цветов машин по уровню
+cars = ['teacher_car', 'red_car', 'white_car', 'yellow_car']
+angles = ['front', 'back', 'left', 'right']
+color = 0
+color_car = cars[color]
+angle = angles[0]
+car0 = Cars(color_car, angle)
 current_scene = None
 
 
@@ -60,13 +70,7 @@ def scene1():
     while running:
         screen.fill((0, 0, 0))
         screen.blit(fon, (0, 0))
-        # font = pygame.font.Font("PressStart2PRegular.ttf", 38)
-        # text_surface = font.render("СТЕПАН МЕХАНИК", True, (0, 0, 0))
-        # text_rect = text_surface.get_rect(center=(400, 50))
-        # screen.blit(text_surface, text_rect)
-        # text_surface = font.render("ВОЗВРАЖДЕНИЕ", True, (0, 0, 0))
-        # text_rect = text_surface.get_rect(center=(400, 130))
-        # screen.blit(text_surface, text_rect)
+
         printText("СТЕПАН МЕХАНИК",  400, 50)
         printText("ВОЗВРАЖДЕНИЕ",  400, 130)
 
@@ -74,9 +78,6 @@ def scene1():
             if event.type == pygame.QUIT:  # если тип события выход из игры, то
                 running = False
                 switch_scene(None)
-            # elif event.type == pygame.KEYDOWN:
-            #     switch_scene(scene2)
-            #     running = False
 
             if event.type == pygame.USEREVENT and event.button == play_button:
                 print("Кнопка play была нажата")
@@ -105,6 +106,7 @@ def scene1():
 
 
 def scene2():
+    global angle, angles, color, color_car, cars, car0
     running = True
     while running:
         screen.fill((255, 255, 255))
@@ -126,18 +128,30 @@ def scene2():
                 running = False
                 switch_scene(None)
             elif event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_SPACE or event.key == pygame.K_ESCAPE:
+                if event.key == pygame.K_SPACE:
+                    if color_car == cars[3]:
+                        switch_scene(scene3)
+                        running = False
+                    else:
+                        color += 1
+                        color_car = cars[color]
+                if event.key == pygame.K_ESCAPE:
                     switch_scene(scene3)
                     running = False
 
             if event.type == pygame.USEREVENT and event.button == front_button:
                 print("Кнопка front была нажата")
-            if event.type == pygame.USEREVENT and event.button == back_button:
+                angle = angles[0]
+            elif event.type == pygame.USEREVENT and event.button == back_button:
                 print("Кнопка back была нажата")
-            if event.type == pygame.USEREVENT and event.button == left_button:
+                angle = angles[1]
+            elif event.type == pygame.USEREVENT and event.button == left_button:
                 print("Кнопка left была нажата")
-            if event.type == pygame.USEREVENT and event.button == right_button:
+                angle = angles[2]
+            elif event.type == pygame.USEREVENT and event.button == right_button:
                 print("Кнопка right была нажата")
+                angle = angles[3]
+
 
             front_button.handle_event(event)
             back_button.handle_event(event)
@@ -152,6 +166,10 @@ def scene2():
         left_button.draw(screen)
         right_button.check_hover(pygame.mouse.get_pos())
         right_button.draw(screen)
+
+        car1 = Cars(color_car, angle)
+        car1.draw(screen)
+
         pygame.display.flip()  # обновляем экран
 
 

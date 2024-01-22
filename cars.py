@@ -34,6 +34,7 @@ class Cars:
     def __init__(self, file, angle, hover_image_path=None):
         cars = []
         self.file = file
+        self.angle = angle
         car = []
         angles = ['front', 'back', 'left', 'right']
         if angle in angles:
@@ -63,4 +64,3 @@ class Cars:
     def draw(self, screen):
         current_image = self.hover_image if self.is_hovered else self.image
         screen.blit(current_image, self.rect.topleft)
-
