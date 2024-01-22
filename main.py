@@ -1,37 +1,14 @@
 # import sqlite3
-
-import pygame  # импорт библиотеки PyGame
 # import sys
-from button import ImageButton
+import cars
+from peremennie import *
+import pygame  # импорт библиотеки PyGame
 
-pygame.init()  # инициализируем PyGame
+pygame.init()
 
-WIDTH = 800  # ширина экрана
-HEIGHT = 600  # высота экрана
-
-screen = pygame.display.set_mode((WIDTH, HEIGHT))  # создаем поверхность экрана
-pygame.display.set_caption("StepanMechanic")
-# Фон меню
-fon = pygame.image.load('data/fon.jpg').convert_alpha()
-fon = pygame.transform.scale(fon, (WIDTH, HEIGHT))
-fon.set_colorkey((255, 255, 255))
-# Фон секретной концовки
-game_over_fon = pygame.image.load('data/game_over.jpg').convert_alpha()
-game_over_fon = pygame.transform.scale(game_over_fon, (WIDTH, HEIGHT))
-game_over_fon.set_colorkey((255, 255, 255))
-
-"""Создание кнопок"""
-
-# Кнопки в главном меню
-play_button = ImageButton(WIDTH/2 - (350/2), 225, 350, 122, "Play", "btn01.png", "btn02.png", "click.mp3")
-levels_button = ImageButton(WIDTH/2 - (350/2), 350, 350, 122, "Levels", "btn01.png", "btn02.png", "click.mp3")
-out_button = ImageButton(WIDTH - 252, 500, 252, 100, "Выйти", "btn01.png", "btn02.png", "click.mp3")
-# Кнопки для концовки
-menu_button = ImageButton(WIDTH/4.5 - (350/2), 500, 350, 100, "Главное меню", "btn01.png", "btn02.png", "click.mp3")
-out1_button = ImageButton(WIDTH - 252, 500, 252, 100, "Выйти", "btn01.png", "btn02.png", "click.mp3")
-
-
-current_scene = None
+musik = pygame.mixer.Sound('data/mp3')
+game_musik = pygame.mixer.Sound('data/gamemp3')
+gameover_musik = pygame.mixer.Sound('data/overmp3')
 
 
 def switch_scene(scene):
@@ -47,9 +24,11 @@ def printText(message, x, y, font_color=(0, 0, 0), font_type="PressStart2PRegula
 
 
 def scene1():
+    game_musik.stop()
+    gameover_musik.stop()
+    musik.play()
     running = True
     while running:
-        screen.fill((0, 0, 0))
         screen.blit(fon, (0, 0))
         # font = pygame.font.Font("PressStart2PRegular.ttf", 38)
         # text_surface = font.render("СТЕПАН МЕХАНИК", True, (0, 0, 0))
@@ -70,65 +49,91 @@ def scene1():
             #     running = False
 
             if event.type == pygame.USEREVENT and event.button == play_button:
-                print("Кнопка play была нажата")
                 switch_scene(scene2)
                 running = False
-            if event.type == pygame.USEREVENT and event.button == levels_button:
+            elif event.type == pygame.USEREVENT and event.button == levels_button:
                 print("Кнопка levels была нажата")
-            if event.type == pygame.USEREVENT and event.button == out_button:
-                print("Кнопка out была нажата")
+            elif event.type == pygame.USEREVENT and event.button == out_button:
                 running = False
                 switch_scene(None)
 
             play_button.handle_event(event)
             levels_button.handle_event(event)
             out_button.handle_event(event)
-
+        pos = pygame.mouse.get_pos()
         # код для обновления и отрисовки здесь
-        play_button.check_hover(pygame.mouse.get_pos())
-        play_button.draw(screen)
-        levels_button.check_hover(pygame.mouse.get_pos())
-        levels_button.draw(screen)
-        out_button.check_hover(pygame.mouse.get_pos())
-        out_button.draw(screen)
+        play_button.draw(screen, pos)
+        levels_button.draw(screen, pos)
+        out_button.draw(screen, pos)
 
         pygame.display.flip()  # обновляем экран
 
 
 def scene2():
+    musik.stop()
+    game_musik.play()
     running = True
-    while running:
+
+    pygame.display.flip()
+    while running and current_scene is not None:
         for event in pygame.event.get():  # перебираем события
             if event.type == pygame.QUIT:  # если тип события выход из игры, то
                 running = False
                 switch_scene(None)
             elif event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_SPACE or event.key == pygame.K_ESCAPE:
-                    switch_scene(scene3)
+                if event.key == pygame.K_SPACE:
+                    switch_scene(end_game_screen)
                     running = False
-        screen.fill((255, 255, 255))
-        # код для обновления и отрисовки здесь
+                elif event.key == pygame.K_ESCAPE:
+                    if not pause():
+                        running = False
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                tool_group.update(event.pos, cursor, event.button)
+        screen.blit(fon_scene2, (0, 0))
+        pygame.draw.line(screen, (255, 255, 255), [10, 150], [150, 150], 4)
+        pygame.draw.line(screen, (255, 255, 255), [10, 300], [150, 300], 4)
+        pygame.draw.line(screen, (255, 255, 255), [650, 150], [790, 150], 4)
+        pygame.draw.line(screen, (255, 255, 255), [650, 300], [790, 300], 4)
+        pygame.draw.line(screen, (255, 255, 255), [650, 450], [790, 450], 4)
+        all_sprites_tools.draw(screen, pygame.mouse.get_pos())
+        cursor_group.update(pygame.mouse.get_pos())
 
         pygame.display.flip()  # обновляем экран
 
 
-def scene3():
+def pause():
     running = True
+    surface = pygame.Surface((500, 300), pygame.SRCALPHA)
+    pygame.draw.rect(surface, (206, 209, 205, 245), surface.get_rect())
+    screen.blit(surface, (150, 150))
     while running:
         for event in pygame.event.get():  # перебираем события
             if event.type == pygame.QUIT:  # если тип события выход из игры, то
                 running = False
                 switch_scene(None)
             elif event.type == pygame.KEYDOWN:
-                switch_scene(end_game_screen)
-                running = False
-        screen.fill((200, 200, 200))
-        # код для обновления и отрисовки здесь
+                if event.key == pygame.K_ESCAPE:
+                    switch_scene(scene2)
+                    return True
+            if event.type == pygame.USEREVENT and event.button == pause_menu_button:
+                switch_scene(scene1)
+                return False
+            elif event.type == pygame.USEREVENT and event.button == continue_menu_button:
+                switch_scene(scene2)
+                return True
 
+            pause_menu_button.handle_event(event)
+            continue_menu_button.handle_event(event)
+        # код для обновления и отрисовки здесь
+        pos = pygame.mouse.get_pos()
+        continue_menu_button.draw(screen, pos)
+        pause_menu_button.draw(screen, pos)
         pygame.display.flip()  # обновляем экран
 
 
 def end_game_screen():
+    game_musik.stop()
+    gameover_musik.play()
     game_over = False  # Секретная концовка - False, Выигрыш - True
 
     # con = sqlite3.connect('StepanMechanic.sqlite')
@@ -172,21 +177,18 @@ def end_game_screen():
                 running = False
 
             if event.type == pygame.USEREVENT and event.button == menu_button:
-                print("Кнопка menu была нажата")
                 switch_scene(scene1)
                 running = False
-            if event.type == pygame.USEREVENT and event.button == out1_button:
-                print("Кнопка out1 была нажата")
+            elif event.type == pygame.USEREVENT and event.button == out1_button:
                 running = False
                 switch_scene(None)
 
             menu_button.handle_event(event)
             out1_button.handle_event(event)
+        pos = pygame.mouse.get_pos()
         # код для обновления и отрисовки здесь
-        menu_button.check_hover(pygame.mouse.get_pos())
-        menu_button.draw(screen)
-        out1_button.check_hover(pygame.mouse.get_pos())
-        out1_button.draw(screen)
+        menu_button.draw(screen, pos)
+        out1_button.draw(screen, pos)
         pygame.display.flip()  # обновляем экран
 
 

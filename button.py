@@ -25,13 +25,14 @@ class ImageButton:
             self.sound = pygame.mixer.Sound(file)
         self.is_hovered = False
 
-    def draw(self, screen):
+    def draw(self, screen, mouse_pos):
         current_image = self.hover_image if self.is_hovered else self.image
         screen.blit(current_image, self.rect.topleft)
 
         font = pygame.font.Font("PressStart2PRegular.ttf", 23)
         text_surface = font.render(self.text, True, (0, 0, 0))
         text_rect = text_surface.get_rect(center=self.rect.center)
+        self.check_hover(mouse_pos)
         screen.blit(text_surface, text_rect)
 
     def check_hover(self, mouse_pos):

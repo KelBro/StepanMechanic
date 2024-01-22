@@ -42,7 +42,6 @@ class AnimatedSprite(pygame.sprite.Sprite):
             self.count = 0
 
 
-
 class Sprite(pygame.sprite.Sprite):
     def __init__(self, image_path, x, y, tool_type, car_type, size=None, *group, alpha=256):
         super().__init__(*group)
@@ -50,9 +49,9 @@ class Sprite(pygame.sprite.Sprite):
         self.car_type = car_type
         self.type = type
         image_path = 'data/' + image_path
-        self.image_orig = pygame.image.load(image_path)
-        self.image_orig.set_colorkey([0, 0, 0])
-        self.image = self.image_orig.copy()
+        self.image = pygame.image.load(image_path)
+        # self.image_orig.set_colorkey([0, 0, 0])
+        # self.image = self.image_orig.copy()
         self.image.set_alpha(alpha)
         if size is not None:
             self.image = pygame.transform.scale(self.image, size)
@@ -80,10 +79,7 @@ class Sprite(pygame.sprite.Sprite):
                 self.image.set_alpha(new_alpha)
 
 
-
-
 class Cursor(pygame.sprite.Sprite):
-
     def __init__(self, x, y, *group):
         super().__init__(*group)
         self.img = pygame.image.load('data/arrow.png')
@@ -92,7 +88,6 @@ class Cursor(pygame.sprite.Sprite):
         self.rect.x = x
         self.rect.y = y
         self.size = self.image.get_size()
-        self.tool = 'sponge'
 
     def update(self, pos):
         if self.image != self.img:
