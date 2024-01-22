@@ -15,6 +15,10 @@ pygame.display.set_caption("StepanMechanic")
 fon = pygame.image.load('data/fon.jpg').convert_alpha()
 fon = pygame.transform.scale(fon, (WIDTH, HEIGHT))
 fon.set_colorkey((255, 255, 255))
+# Фон игры
+garage = pygame.image.load('data/garage.jpg').convert_alpha()
+garage = pygame.transform.scale(garage, (WIDTH, HEIGHT))
+garage.set_colorkey((255, 255, 255))
 # Фон секретной концовки
 game_over_fon = pygame.image.load('data/game_over.jpg').convert_alpha()
 game_over_fon = pygame.transform.scale(game_over_fon, (WIDTH, HEIGHT))
@@ -29,6 +33,11 @@ out_button = ImageButton(WIDTH - 252, 500, 252, 100, "Выйти", "btn01.png", 
 # Кнопки для концовки
 menu_button = ImageButton(WIDTH/4.5 - (350/2), 500, 350, 100, "Главное меню", "btn01.png", "btn02.png", "click.mp3")
 out1_button = ImageButton(WIDTH - 252, 500, 252, 100, "Выйти", "btn01.png", "btn02.png", "click.mp3")
+# Кнопки поворота машины
+front_button = ImageButton(WIDTH * 1/8 - 15, 15, 170, 70, "Front", "btn01.png", "btn02.png", "click.mp3")
+back_button = ImageButton(WIDTH * 2.5/8 - 10, 15, 170, 70, "Back", "btn01.png", "btn02.png", "click.mp3")
+left_button = ImageButton(WIDTH * 4/8, 15, 170, 70, "Left", "btn01.png", "btn02.png", "click.mp3")
+right_button = ImageButton(WIDTH * 5.5/8 + 5, 15, 170, 70, "Right", "btn01.png", "btn02.png", "click.mp3")
 
 
 current_scene = None
@@ -98,6 +107,20 @@ def scene1():
 def scene2():
     running = True
     while running:
+        screen.fill((255, 255, 255))
+        screen.blit(garage, (0, 0))
+        # font = pygame.font.Font(None, 36)
+        # if is_running:
+        #     elapsed_time = pygame.time.get_ticks() - start_time
+        # text = font.render(f'Время: {elapsed_time // 1000}.{(elapsed_time % 1000) // 10} с', True, (0, 0, 0))
+        # screen.blit(text, (width // 2 - text.get_width() // 2, 200))
+        # Добавление полок для предметов
+        pygame.draw.line(screen, (180, 180, 180), [10, 150], [150, 150], 4)
+        pygame.draw.line(screen, (180, 180, 180), [10, 300], [150, 300], 4)
+        pygame.draw.line(screen, (180, 180, 180), [650, 150], [790, 150], 4)
+        pygame.draw.line(screen, (180, 180, 180), [650, 300], [790, 300], 4)
+        pygame.draw.line(screen, (180, 180, 180), [650, 450], [790, 450], 4)
+
         for event in pygame.event.get():  # перебираем события
             if event.type == pygame.QUIT:  # если тип события выход из игры, то
                 running = False
@@ -106,9 +129,29 @@ def scene2():
                 if event.key == pygame.K_SPACE or event.key == pygame.K_ESCAPE:
                     switch_scene(scene3)
                     running = False
-        screen.fill((255, 255, 255))
-        # код для обновления и отрисовки здесь
 
+            if event.type == pygame.USEREVENT and event.button == front_button:
+                print("Кнопка front была нажата")
+            if event.type == pygame.USEREVENT and event.button == back_button:
+                print("Кнопка back была нажата")
+            if event.type == pygame.USEREVENT and event.button == left_button:
+                print("Кнопка left была нажата")
+            if event.type == pygame.USEREVENT and event.button == right_button:
+                print("Кнопка right была нажата")
+
+            front_button.handle_event(event)
+            back_button.handle_event(event)
+            left_button.handle_event(event)
+            right_button.handle_event(event)
+        # код для обновления и отрисовки здесь
+        front_button.check_hover(pygame.mouse.get_pos())
+        front_button.draw(screen)
+        back_button.check_hover(pygame.mouse.get_pos())
+        back_button.draw(screen)
+        left_button.check_hover(pygame.mouse.get_pos())
+        left_button.draw(screen)
+        right_button.check_hover(pygame.mouse.get_pos())
+        right_button.draw(screen)
         pygame.display.flip()  # обновляем экран
 
 
