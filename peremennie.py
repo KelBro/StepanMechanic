@@ -1,6 +1,8 @@
 import pygame
 from button import ImageButton
 from Sprites import SpriteTool, Cursor
+from cars import Cars
+
 
 
 pygame.init()  # инициализируем PyGame
@@ -34,6 +36,34 @@ menu_button = ImageButton(WIDTH/4.5 - (350/2), 500, 350, 100, "Главное м
 pause_menu_button = ImageButton(WIDTH//3 - 40, HEIGHT // 2, 350, 100, "Главное меню", "btn01.png", "btn02.png", "click.mp3")
 continue_menu_button = ImageButton(WIDTH//3 - 40, HEIGHT // 2 - 120, 350, 100, "Вернуться", "btn01.png", "btn02.png", "click.mp3")
 out1_button = ImageButton(WIDTH - 252, 500, 252, 100, "Выйти", "btn01.png", "btn02.png", "click.mp3")
+
+musik = pygame.mixer.Sound('data/mp3')
+game_musik = pygame.mixer.Sound('data/gamemp3')
+gameover_musik = pygame.mixer.Sound('data/overmp3')
+
+"""Создание кнопок"""
+
+# Кнопки в главном меню
+play_button = ImageButton(WIDTH/2 - (350/2), 225, 350, 122, "Play", "btn01.png", "btn02.png", "click.mp3")
+levels_button = ImageButton(WIDTH/2 - (350/2), 350, 350, 122, "Levels", "btn01.png", "btn02.png", "click.mp3")
+out_button = ImageButton(WIDTH - 252, 500, 252, 100, "Выйти", "btn01.png", "btn02.png", "click.mp3")
+# Кнопки для концовки
+menu_button = ImageButton(WIDTH/4.5 - (350/2), 500, 350, 100, "Главное меню", "btn01.png", "btn02.png", "click.mp3")
+out1_button = ImageButton(WIDTH - 252, 500, 252, 100, "Выйти", "btn01.png", "btn02.png", "click.mp3")
+# Кнопки поворота машины
+front_button = ImageButton(WIDTH * 1/8 - 15, 15, 170, 70, "Front", "btn01.png", "btn02.png", "click.mp3")
+back_button = ImageButton(WIDTH * 2.5/8 - 10, 15, 170, 70, "Back", "btn01.png", "btn02.png", "click.mp3")
+left_button = ImageButton(WIDTH * 4/8, 15, 170, 70, "Left", "btn01.png", "btn02.png", "click.mp3")
+right_button = ImageButton(WIDTH * 5.5/8 + 5, 15, 170, 70, "Right", "btn01.png", "btn02.png", "click.mp3")
+
+
+# список цветов машин по уровню
+cars = ['teacher_car', 'red_car', 'white_car', 'yellow_car']
+angles = ['front', 'back', 'left', 'right']
+color = 0
+color_car = cars[color]
+angle = angles[0]
+car0 = Cars(color_car, angle)
 
 """Спрайты"""
 
