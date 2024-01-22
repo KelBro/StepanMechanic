@@ -1,6 +1,11 @@
 # import sqlite3
+
+import pygame  # импорт библиотеки PyGame
 # import sys
-import cars
+from button import ImageButton
+from cars import Cars
+
+pygame.init()  # инициализируем PyGame
 from peremennie import *
 import pygame  # импорт библиотеки PyGame
 
@@ -9,6 +14,30 @@ pygame.init()
 musik = pygame.mixer.Sound('data/mp3')
 game_musik = pygame.mixer.Sound('data/gamemp3')
 gameover_musik = pygame.mixer.Sound('data/overmp3')
+
+"""Создание кнопок"""
+
+# Кнопки в главном меню
+play_button = ImageButton(WIDTH/2 - (350/2), 225, 350, 122, "Play", "btn01.png", "btn02.png", "click.mp3")
+levels_button = ImageButton(WIDTH/2 - (350/2), 350, 350, 122, "Levels", "btn01.png", "btn02.png", "click.mp3")
+out_button = ImageButton(WIDTH - 252, 500, 252, 100, "Выйти", "btn01.png", "btn02.png", "click.mp3")
+# Кнопки для концовки
+menu_button = ImageButton(WIDTH/4.5 - (350/2), 500, 350, 100, "Главное меню", "btn01.png", "btn02.png", "click.mp3")
+out1_button = ImageButton(WIDTH - 252, 500, 252, 100, "Выйти", "btn01.png", "btn02.png", "click.mp3")
+# Кнопки поворота машины
+front_button = ImageButton(WIDTH * 1/8 - 15, 15, 170, 70, "Front", "btn01.png", "btn02.png", "click.mp3")
+back_button = ImageButton(WIDTH * 2.5/8 - 10, 15, 170, 70, "Back", "btn01.png", "btn02.png", "click.mp3")
+left_button = ImageButton(WIDTH * 4/8, 15, 170, 70, "Left", "btn01.png", "btn02.png", "click.mp3")
+right_button = ImageButton(WIDTH * 5.5/8 + 5, 15, 170, 70, "Right", "btn01.png", "btn02.png", "click.mp3")
+
+
+# список цветов машин по уровню
+cars = ['teacher_car', 'red_car', 'white_car', 'yellow_car']
+angles = ['front', 'back', 'left', 'right']
+color = 0
+color_car = cars[color]
+angle = angles[0]
+car0 = Cars(color_car, angle)
 
 
 def switch_scene(scene):
@@ -30,13 +59,7 @@ def scene1():
     running = True
     while running:
         screen.blit(fon, (0, 0))
-        # font = pygame.font.Font("PressStart2PRegular.ttf", 38)
-        # text_surface = font.render("СТЕПАН МЕХАНИК", True, (0, 0, 0))
-        # text_rect = text_surface.get_rect(center=(400, 50))
-        # screen.blit(text_surface, text_rect)
-        # text_surface = font.render("ВОЗВРАЖДЕНИЕ", True, (0, 0, 0))
-        # text_rect = text_surface.get_rect(center=(400, 130))
-        # screen.blit(text_surface, text_rect)
+
         printText("СТЕПАН МЕХАНИК",  400, 50)
         printText("ВОЗВРАЖДЕНИЕ",  400, 130)
 
@@ -44,9 +67,6 @@ def scene1():
             if event.type == pygame.QUIT:  # если тип события выход из игры, то
                 running = False
                 switch_scene(None)
-            # elif event.type == pygame.KEYDOWN:
-            #     switch_scene(scene2)
-            #     running = False
 
             if event.type == pygame.USEREVENT and event.button == play_button:
                 switch_scene(scene2)
@@ -70,11 +90,11 @@ def scene1():
 
 
 def scene2():
+    global angle, angles, color, color_car, cars, car0
     musik.stop()
     game_musik.play()
     running = True
 
-    pygame.display.flip()
     while running and current_scene is not None:
         for event in pygame.event.get():  # перебираем события
             if event.type == pygame.QUIT:  # если тип события выход из игры, то
@@ -87,8 +107,34 @@ def scene2():
                 elif event.key == pygame.K_ESCAPE:
                     if not pause():
                         running = False
+                elif event.key == pygame.K_LSHIFT:
+                    if color_car == cars[3]:
+                        switch_scene(scene3)
+                        running = False
+                    else:
+                        color += 1
+                        color_car = cars[color]
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 tool_group.update(event.pos, cursor, event.button)
+            if event.type == pygame.USEREVENT and event.button == front_button:
+                print("Кнопка front была нажата")
+                angle = angles[0]
+            elif event.type == pygame.USEREVENT and event.button == back_button:
+                print("Кнопка back была нажата")
+                angle = angles[1]
+            elif event.type == pygame.USEREVENT and event.button == left_button:
+                print("Кнопка left была нажата")
+                angle = angles[2]
+            elif event.type == pygame.USEREVENT and event.button == right_button:
+                print("Кнопка right была нажата")
+                angle = angles[3]
+
+
+            front_button.handle_event(event)
+            back_button.handle_event(event)
+            left_button.handle_event(event)
+            right_button.handle_event(event)
+
         screen.blit(fon_scene2, (0, 0))
         pygame.draw.line(screen, (255, 255, 255), [10, 150], [150, 150], 4)
         pygame.draw.line(screen, (255, 255, 255), [10, 300], [150, 300], 4)
@@ -97,6 +143,18 @@ def scene2():
         pygame.draw.line(screen, (255, 255, 255), [650, 450], [790, 450], 4)
         all_sprites_tools.draw(screen, pygame.mouse.get_pos())
         cursor_group.update(pygame.mouse.get_pos())
+        # код для обновления и отрисовки здесь
+        front_button.check_hover(pygame.mouse.get_pos())
+        front_button.draw(screen)
+        back_button.check_hover(pygame.mouse.get_pos())
+        back_button.draw(screen)
+        left_button.check_hover(pygame.mouse.get_pos())
+        left_button.draw(screen)
+        right_button.check_hover(pygame.mouse.get_pos())
+        right_button.draw(screen)
+
+        car1 = Cars(color_car, angle)
+        car1.draw(screen)
 
         pygame.display.flip()  # обновляем экран
 

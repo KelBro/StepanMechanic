@@ -34,6 +34,7 @@ class Cars:
     def __init__(self, file, angle, hover_image_path=None):
         cars = []
         self.file = file
+        self.angle = angle
         car = []
         angles = ['front', 'back', 'left', 'right']
         if angle in angles:
