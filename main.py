@@ -27,8 +27,8 @@ def scene1():
     while running:
         screen.blit(fon, (0, 0))
 
-        printText("СТЕПАН МЕХАНИК",  400, 50)
-        printText("ВОЗВРАЖДЕНИЕ",  400, 130)
+        printText("СТЕПАН МЕХАНИК", 400, 50)
+        printText("ВОЗВРАЖДЕНИЕ", 400, 130)
 
         for event in pygame.event.get():  # перебираем события
             if event.type == pygame.QUIT:  # если тип события выход из игры, то
@@ -61,9 +61,11 @@ def scene2():
     musik.stop()
     game_musik.play()
     running = True
+    to_defect = 0
 
     while running and current_scene is not None:
         for event in pygame.event.get():  # перебираем события
+
             if event.type == pygame.QUIT:  # если тип события выход из игры, то
                 running = False
                 switch_scene(None)
@@ -83,19 +85,68 @@ def scene2():
                         color_car = cars[color]
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 tool_group.update(event.pos, cursor, event.button)
+                if event.button == 1:
+                    for index, group in enumerate(defects_group):
+                        for sprite in group:
+                            if sprite.tool_type == cursor.tool and sprite.car_type == to_defect:
+                                if sprite.rect.collidepoint(event.pos):
+                                    current_group = group
+                                    current_s = sprite
+                                    change_alpha = True
+                                    current_s.update(change_alpha)
+                                    current_group.draw(screen)
+
             if event.type == pygame.USEREVENT and event.button == front_button:
+                """дефекты спереди машины"""
                 angle = angles[0]
+
             elif event.type == pygame.USEREVENT and event.button == back_button:
+                """дефекты сзади машины"""
                 angle = angles[1]
+
             elif event.type == pygame.USEREVENT and event.button == left_button:
+                """дефекты слева машины"""
                 angle = angles[2]
+
             elif event.type == pygame.USEREVENT and event.button == right_button:
+                """дефекты справа машины"""
                 angle = angles[3]
 
             front_button.handle_event(event)
             back_button.handle_event(event)
             left_button.handle_event(event)
             right_button.handle_event(event)
+
+        if angle == angles[0]:
+            if color_car == cars[0]:
+                to_defect = 'teacher_front'
+            elif color_car == cars[1]:
+                to_defect = 'red_front'
+            else:
+                to_defect = None
+        if angle == angles[1]:
+            if color_car == cars[2]:
+                to_defect = 'white_back'
+            elif color_car == cars[3]:
+                to_defect = 'yellow_back'
+            else:
+                to_defect = None
+
+        if angle == angles[2]:
+            if color_car == cars[1]:
+                to_defect = 'red_left'
+            elif color_car == cars[2]:
+                to_defect = 'white_left'
+            elif color_car == cars[3]:
+                to_defect = 'yellow_left'
+            else:
+                to_defect = None
+
+        if angle == angles[3]:
+            if color_car == cars[3]:
+                to_defect = 'yellow_right'
+            else:
+                to_defect = None
 
         screen.blit(fon_scene2, (0, 0))
         pygame.draw.line(screen, (255, 255, 255), [10, 150], [150, 150], 4)
@@ -111,8 +162,25 @@ def scene2():
 
         car1 = Cars(color_car, angle)
         car1.draw(screen)
+        if to_defect == 'teacher_front':
+            teacher_front_group.draw(screen)
+        if to_defect == 'red_front':
+            red_front_group.draw(screen)
+        if to_defect == 'white_back':
+            white_back_group.draw(screen)
+        if to_defect == 'yellow_back':
+            yellow_back_group.draw(screen)
+        if to_defect == 'red_left':
+            red_left_group.draw(screen)
+        if to_defect == 'white_left':
+            white_left_group.draw(screen)
+        if to_defect == 'yellow_left':
+            yellow_left_group.draw(screen)
+        if to_defect == 'yellow_right':
+            yellow_right_group.draw(screen)
         all_sprites_tools.draw(screen, pos)
         cursor_group.update(pos)
+
         # код для обновления и отрисовки здесь
 
         pygame.display.flip()  # обновляем экран
@@ -166,12 +234,12 @@ def end_game_screen():
     # con.close()
     screen.fill([0, 0, 0])
     if game_over:
-        printText('YOU WIN',  400, 200, [255, 255, 0], 'PressStart2PRegular.ttf', 50)
+        printText('YOU WIN', 400, 200, [255, 255, 0], 'PressStart2PRegular.ttf', 50)
     else:
         screen.blit(game_over_fon, (0, 0))
 
-        printText('!!You Win!!',  400, 400, [255, 0, 0], 'PressStart2PRegular.ttf', 38)
-        printText('Кчау',  40, 240, [255, 0, 0], 'PressStart2PRegular.ttf', 10)
+        printText('!!You Win!!', 400, 400, [255, 0, 0], 'PressStart2PRegular.ttf', 38)
+        printText('Кчау', 40, 240, [255, 0, 0], 'PressStart2PRegular.ttf', 10)
 
     # game_over__menu = True
     running = True

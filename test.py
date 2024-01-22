@@ -690,8 +690,8 @@ while running:
                                             red_left_group.draw(screen)
                                         elif to_defect == 'red_front':
                                             red_front_group.draw(screen)
-                                        # elif to_defect == 'teacher_front':
-                                        #     teacher_front_group.draw(screen)
+                                        elif to_defect == 'teacher_front':
+                                            teacher_front_group.draw(screen)
 
 
                 elif event.type == pygame.MOUSEBUTTONUP:

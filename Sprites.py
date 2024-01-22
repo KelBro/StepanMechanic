@@ -12,6 +12,7 @@ class Cursor(pygame.sprite.Sprite):
         self.rect.x = x
         self.rect.y = y
         self.size = self.image.get_size()
+        self.tool = 0
 
     def update(self, pos):
         if self.image != self.img:
@@ -86,16 +87,26 @@ class AnimatedSprite(pygame.sprite.Sprite):
 
 class SpriteDefects(pygame.sprite.Sprite):
 
-    def __init__(self, image_path, x, y, alpha=256, *group):
+    def __init__(self, image_path, x, y, tool_type, car_type, size=None, alpha=255, *group):
         super().__init__(*group)
-        self.image = pygame.image.load('data/' + image_path)
-        self.image.set_alpha(alpha)
+        self.file = 'data/' + image_path
+        self.alpha = alpha
+        self.image = pygame.image.load(self.file)
+        self.image.set_alpha(self.alpha)
+        if size is not None:
+            self.image = pygame.transform.scale(self.image, size)
         self.rect = self.image.get_rect()
         self.rect.x = x
         self.rect.y = y
+        self.tool_type = tool_type
+        self.car_type = car_type
+        self.new_alpha = 255
 
     def update(self, change_alpha):  # удаление дефекта с машины
         if change_alpha:
-            if self.image.get_alpha() < 255:
-                new_alpha = min(255, self.image.get_alpha() + 1)
-                self.image.set_alpha(new_alpha)
+            if self.image.get_alpha() > 0:
+                self.new_alpha = self.image.get_alpha() - 30
+                self.image.set_alpha(self.new_alpha)
+
+
+
