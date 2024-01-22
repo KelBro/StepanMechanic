@@ -1,6 +1,6 @@
 import pygame
 from button import ImageButton
-from Sprites import SpriteTool, Cursor, AnimatedSprite
+from Sprites import SpriteTool, Cursor, AnimatedSprite, SpriteDefects
 from cars import Cars
 
 pygame.init()  # инициализируем PyGame
@@ -67,6 +67,9 @@ color_car = cars[color]
 angle = angles[0]
 car0 = Cars(color_car, angle)
 
+"""Флаг"""
+flag = True
+
 """Спрайты"""
 
 # Группы спрайтов
@@ -74,7 +77,7 @@ car0 = Cars(color_car, angle)
 tool_group = pygame.sprite.Group()
 cursor_group = pygame.sprite.Group()
 all_sprites_tools = pygame.sprite.Group()
-
+defects_group = []
 # Спрайты инструментов
 
 # Губка
@@ -93,6 +96,40 @@ cursor = Cursor(0, 0, cursor_group, all_sprites_tools)
 gold = AnimatedSprite('data/star_gold.png', 'data/star_gold_state2.png')
 silver = AnimatedSprite('data/star_silver.png', 'data/star_silver_state2.png')
 bronza = AnimatedSprite('data/star_bronza.png', 'data/star_bronza_state2.png')
+
+# Спрайты дефектов
+
+"""дефекты: тестовая машина"""
+teacher_front_group = pygame.sprite.Group()
+dirt = SpriteDefects('dirt.png', 336, 400, 'sponge', 'teacher_front', (120, 80), 255, teacher_front_group)  # спереди: грязь
+defects_group.append(teacher_front_group)
+"""дефекты: красная машина"""
+red_left_group = pygame.sprite.Group()
+dirt1 = SpriteDefects('dirt 1.png', 335, 350, 'sponge', 'red_left', (130, 100), 255, red_left_group)  # слева: грязь
+defects_group.append(red_left_group)
+red_front_group = pygame.sprite.Group()
+ground_coat = SpriteDefects('ground coat.png', 340, 354, 'f_spray_paint', 'red_front', (110, 90), 255, red_front_group)
+rust0 = SpriteDefects('rust.png', 336, 364, 'trowel', 'red_front', (115, 115), 255, red_front_group)  # справа: ржавчина
+defects_group.append(red_front_group)
+"""дефекты: белая машина"""
+white_left_group = pygame.sprite.Group()
+rust1 = SpriteDefects('rust1.png', 420, 374, 'trowel', 'white_left', (90, 90), 255, white_left_group)  # слева:ржавчина
+ground_coat2 = SpriteDefects('ground coat.png', 420, 374, 'f_spray_paint', 'white_left', (90, 90), 255, white_left_group)
+defects_group.append(white_left_group)
+white_back_group = pygame.sprite.Group()
+tire = SpriteDefects('tire puncture.png', 290, 440, 'glue',  'white_back', (35, 19), 255, white_back_group) # сзади: шина
+defects_group.append(white_back_group)
+"""дефекты: жёлтая машина"""
+yellow_left_group = pygame.sprite.Group()
+tire1 = SpriteDefects('tire puncture.png', 499, 440, 'glue', 'yellow_left', (35, 19), 255, yellow_left_group)  # слева: шина
+defects_group.append(yellow_left_group)
+yellow_right_group = pygame.sprite.Group()
+dirt2 = SpriteDefects('dirt.png', 336, 360, 'sponge', 'yellow_right', (120, 80), 255, yellow_right_group)  # справа:грязь
+defects_group.append(yellow_right_group)
+yellow_back_group = pygame.sprite.Group()
+rust2 = SpriteDefects('rust1.png', 300, 334, 'trowel', 'yellow_back', (120, 120), 255, yellow_back_group)  # сзади: ржавчина1
+ground_coat1 = SpriteDefects('ground coat.png', 310, 334, 'f_spray_paint', 'yellow_back', (90, 90), 255, yellow_back_group)
+defects_group.append(yellow_back_group)
 
 """Музончик"""
 
