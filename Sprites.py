@@ -3,7 +3,6 @@ import pygame
 
 
 class Cursor(pygame.sprite.Sprite):
-
     def __init__(self, x, y, *group):
         super().__init__(*group)
         self.img = pygame.image.load('data/arrow.png')
@@ -49,13 +48,10 @@ class SpriteTool(pygame.sprite.Sprite):
 
 
 class AnimatedSprite(pygame.sprite.Sprite):
-    def __init__(self, image1, image2, x, y, *group):
+    def __init__(self, image1, image2, *group):
         super().__init__(*group)
         self.frames = []
         self.cur_frame = 0
-        self.x = x
-        self.y = y
-
         self.count = -1
 
         self.image1 = pygame.image.load(image1)
@@ -69,23 +65,26 @@ class AnimatedSprite(pygame.sprite.Sprite):
         self.frames.append(self.image1)
         self.frames.append(self.image2)
 
-    def update(self):
-        if self.count == -1:
-            self.image = self.frames[self.cur_frame]
-            peremennie.screen.blit(self.image, (self.x, self.y))
+    def update(self, x, y):
+        if self.count < 0:
+            peremennie.screen.blit(self.image1, (x, y))
         self.count += 1
-        if self.count == 35:
+        if self.cur_frame:
+            peremennie.screen.blit(self.image1, (x, y))
+        else:
+            peremennie.screen.blit(self.image2, (x, y))
+        if self.count == 20:
             if not self.cur_frame:
                 self.cur_frame = 1
+                peremennie.screen.blit(self.image1, (x, y))
+                self.count = 0
             else:
                 self.cur_frame = 0
-            self.image = self.frames[self.cur_frame]
-            peremennie.screen.blit(self.image, (self.x, self.y))
-            self.count = 0
+                peremennie.screen.blit(self.image2, (x, y))
+                self.count = 0
 
 
 class SpriteDefects(pygame.sprite.Sprite):
-
     def __init__(self, image_path, x, y, alpha=256, *group):
         super().__init__(*group)
         self.image = pygame.image.load('data/' + image_path)
