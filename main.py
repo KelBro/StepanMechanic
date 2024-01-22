@@ -84,16 +84,12 @@ def scene2():
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 tool_group.update(event.pos, cursor, event.button)
             if event.type == pygame.USEREVENT and event.button == front_button:
-                print("Кнопка front была нажата")
                 angle = angles[0]
             elif event.type == pygame.USEREVENT and event.button == back_button:
-                print("Кнопка back была нажата")
                 angle = angles[1]
             elif event.type == pygame.USEREVENT and event.button == left_button:
-                print("Кнопка left была нажата")
                 angle = angles[2]
             elif event.type == pygame.USEREVENT and event.button == right_button:
-                print("Кнопка right была нажата")
                 angle = angles[3]
 
             front_button.handle_event(event)
@@ -107,9 +103,6 @@ def scene2():
         pygame.draw.line(screen, (255, 255, 255), [650, 150], [790, 150], 4)
         pygame.draw.line(screen, (255, 255, 255), [650, 300], [790, 300], 4)
         pygame.draw.line(screen, (255, 255, 255), [650, 450], [790, 450], 4)
-        all_sprites_tools.draw(screen, pygame.mouse.get_pos())
-        cursor_group.update(pygame.mouse.get_pos())
-        # код для обновления и отрисовки здесь
         pos = pygame.mouse.get_pos()
         front_button.draw(screen, pos)
         back_button.draw(screen, pos)
@@ -118,6 +111,9 @@ def scene2():
 
         car1 = Cars(color_car, angle)
         car1.draw(screen)
+        all_sprites_tools.draw(screen, pos)
+        cursor_group.update(pos)
+        # код для обновления и отрисовки здесь
 
         pygame.display.flip()  # обновляем экран
 
