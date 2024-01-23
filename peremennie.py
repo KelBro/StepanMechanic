@@ -33,24 +33,30 @@ level_fon.set_colorkey((255, 255, 255))
 """Создание кнопок"""
 
 # Кнопки в главном меню
-play_button = ImageButton(WIDTH/2 - (350/2), 225, 350, 122, "Play", "btn01.png", "btn02.png", "click.mp3")
-levels_button = ImageButton(WIDTH/2 - (350/2), 350, 350, 122, "Levels", "btn01.png", "btn02.png", "click.mp3")
+play_button = ImageButton(WIDTH / 2 - (350 / 2), 225, 350, 122, "Play", "btn01.png", "btn02.png", "click.mp3")
+levels_button = ImageButton(WIDTH / 2 - (350 / 2), 350, 350, 122, "Levels", "btn01.png", "btn02.png", "click.mp3")
 out_button = ImageButton(WIDTH - 252, 500, 252, 100, "Выйти", "btn01.png", "btn02.png", "click.mp3")
 # Кнопки для концовки
-menu_button = ImageButton(WIDTH/4.5 - (350/2), 500, 350, 100, "Главное меню", "btn01.png", "btn02.png", "click.mp3")
+menu_button = ImageButton(WIDTH / 4.5 - (350 / 2), 500, 350, 100, "Главное меню", "btn01.png", "btn02.png", "click.mp3")
 out1_button = ImageButton(WIDTH - 252, 500, 252, 100, "Выйти", "btn01.png", "btn02.png", "click.mp3")
 # Кнопки поворота машины
-front_button = ImageButton(WIDTH * 1/8 - 15, 15, 170, 70, "Front", "btn01.png", "btn02.png", "click.mp3")
-back_button = ImageButton(WIDTH * 2.5/8 - 10, 15, 170, 70, "Back", "btn01.png", "btn02.png", "click.mp3")
-left_button = ImageButton(WIDTH * 4/8, 15, 170, 70, "Left", "btn01.png", "btn02.png", "click.mp3")
-right_button = ImageButton(WIDTH * 5.5/8 + 5, 15, 170, 70, "Right", "btn01.png", "btn02.png", "click.mp3")
+front_button = ImageButton(WIDTH * 1.35 / 8 - 15, 15, 150, 70, "Front", "btn01.png", "btn02.png", "click.mp3")
+back_button = ImageButton(WIDTH * 2.7 / 8 - 10, 15, 150, 70, "Back", "btn01.png", "btn02.png", "click.mp3")
+left_button = ImageButton(WIDTH * 4 / 8, 15, 150, 70, "Left", "btn01.png", "btn02.png", "click.mp3")
+right_button = ImageButton(WIDTH * 5.35 / 8 + 5, 15, 150, 70, "Right", "btn01.png", "btn02.png", "click.mp3")
+
 # Кнопки для паузы
-pause_menu_button = ImageButton(WIDTH//3 - 40, HEIGHT // 2, 350, 100, "Главное меню", "btn01.png", "btn02.png", "click.mp3")
-continue_menu_button = ImageButton(WIDTH//3 - 40, HEIGHT // 2 - 120, 350, 100, "Вернуться", "btn01.png", "btn02.png", "click.mp3")
+pause_menu_button = ImageButton(WIDTH // 3 - 40, HEIGHT // 2, 350, 100, "Главное меню", "btn01.png", "btn02.png",
+                                "click.mp3")
+continue_menu_button = ImageButton(WIDTH // 3 - 40, HEIGHT // 2 - 120, 350, 100, "Вернуться", "btn01.png", "btn02.png",
+                                   "click.mp3")
 # Кнопки промежуточного меню
-restart_button = ImageButton(WIDTH//3 - 100, HEIGHT // 2 - 50, 250, 100, "Рестарт", "btn01.png", "btn02.png", "click.mp3")
-next_button = ImageButton(WIDTH//3 - 100, HEIGHT // 2 - 140, 250, 100, "Следующий", "btn01.png", "btn02.png", "click.mp3")
-konec_lvl_menu_button = ImageButton(WIDTH//3 - 95, HEIGHT // 2 + 40, 150, 100, "Меню", "btn01.png", "btn02.png", "click.mp3")
+restart_button = ImageButton(WIDTH // 3 - 100, HEIGHT // 2 - 50, 250, 100, "Рестарт", "btn01.png", "btn02.png",
+                             "click.mp3")
+next_button = ImageButton(WIDTH // 3 - 100, HEIGHT // 2 - 140, 250, 100, "Следующий", "btn01.png", "btn02.png",
+                          "click.mp3")
+konec_lvl_menu_button = ImageButton(WIDTH // 3 - 95, HEIGHT // 2 + 40, 150, 100, "Меню", "btn01.png", "btn02.png",
+                                    "click.mp3")
 # Кнопки в выборе лвла
 level_menu_button = ImageButton(20, 20, 130, 90, "Меню", "btn01.png", "btn02.png", "click.mp3")
 lvl_1_button = ImageButton(150, 60, 150, 500, "Часть 1", "knopka2.png", "lvl1activiti.jpg", "click.mp3")
@@ -101,7 +107,8 @@ bronza = AnimatedSprite('data/star_bronza.png', 'data/star_bronza_state2.png')
 
 """дефекты: тестовая машина"""
 teacher_front_group = pygame.sprite.Group()
-dirt = SpriteDefects('dirt.png', 336, 400, 'sponge', 'teacher_front', (120, 80), 255, teacher_front_group)  # спереди: грязь
+dirt = SpriteDefects('dirt.png', 336, 400, 'sponge', 'teacher_front', (120, 80), 255,
+                     teacher_front_group)  # спереди: грязь
 defects_group.append(teacher_front_group)
 """дефекты: красная машина"""
 red_left_group = pygame.sprite.Group()
@@ -114,21 +121,27 @@ defects_group.append(red_front_group)
 """дефекты: белая машина"""
 white_left_group = pygame.sprite.Group()
 rust1 = SpriteDefects('rust1.png', 420, 374, 'trowel', 'white_left', (90, 90), 255, white_left_group)  # слева:ржавчина
-ground_coat2 = SpriteDefects('ground coat.png', 420, 374, 'f_spray_paint', 'white_left', (90, 90), 255, white_left_group)
+ground_coat2 = SpriteDefects('ground coat.png', 420, 374, 'f_spray_paint', 'white_left', (90, 90), 255,
+                             white_left_group)
 defects_group.append(white_left_group)
 white_back_group = pygame.sprite.Group()
-tire = SpriteDefects('tire puncture.png', 290, 440, 'glue',  'white_back', (35, 19), 255, white_back_group) # сзади: шина
+tire = SpriteDefects('tire puncture.png', 290, 440, 'glue', 'white_back', (35, 19), 255,
+                     white_back_group)  # сзади: шина
 defects_group.append(white_back_group)
 """дефекты: жёлтая машина"""
 yellow_left_group = pygame.sprite.Group()
-tire1 = SpriteDefects('tire puncture.png', 499, 440, 'glue', 'yellow_left', (35, 19), 255, yellow_left_group)  # слева: шина
+tire1 = SpriteDefects('tire puncture.png', 499, 440, 'glue', 'yellow_left', (35, 19), 255,
+                      yellow_left_group)  # слева: шина
 defects_group.append(yellow_left_group)
 yellow_right_group = pygame.sprite.Group()
-dirt2 = SpriteDefects('dirt.png', 336, 360, 'sponge', 'yellow_right', (120, 80), 255, yellow_right_group)  # справа:грязь
+dirt2 = SpriteDefects('dirt.png', 336, 360, 'sponge', 'yellow_right', (120, 80), 255,
+                      yellow_right_group)  # справа:грязь
 defects_group.append(yellow_right_group)
 yellow_back_group = pygame.sprite.Group()
-rust2 = SpriteDefects('rust1.png', 300, 334, 'trowel', 'yellow_back', (120, 120), 255, yellow_back_group)  # сзади: ржавчина1
-ground_coat1 = SpriteDefects('ground coat.png', 310, 334, 'f_spray_paint', 'yellow_back', (90, 90), 255, yellow_back_group)
+rust2 = SpriteDefects('rust1.png', 300, 334, 'trowel', 'yellow_back', (120, 120), 255,
+                      yellow_back_group)  # сзади: ржавчина1
+ground_coat1 = SpriteDefects('ground coat.png', 310, 334, 'f_spray_paint', 'yellow_back', (90, 90), 255,
+                             yellow_back_group)
 defects_group.append(yellow_back_group)
 
 """Музончик"""

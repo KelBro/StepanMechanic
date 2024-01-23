@@ -1,4 +1,4 @@
-# import sqlite3
+import sqlite3
 import pygame  # импорт библиотеки PyGame
 # import sys
 from button import ImageButton
@@ -387,7 +387,7 @@ def end_game_screen():
     game_musik.stop()
     gameover_musik.play(-1)
     game_over = False  # Секретная концовка - False, Выигрыш - True
-
+    game_over = True
     # con = sqlite3.connect('StepanMechanic.sqlite')
     # cur = con.cursor()
     # result = cur.execute("""SELECT finished FROM save_game
@@ -399,16 +399,17 @@ def end_game_screen():
     # if n != 3:
     #     game_over = True
     # con.close()
+
     screen.fill([0, 0, 0])
     if game_over:
-        printText('YOU WIN',  400, 200, 50, (255, 255, 0), 'PressStart2PRegular.ttf')
+        printText('YOU WIN', 400, 200, 50, (255, 255, 0), 'PressStart2PRegular.ttf')
     else:
         screen.blit(game_over_fon, (0, 0))
 
-        printText('!!You Win!!',  400, 400, 38, (255, 0, 0), 'PressStart2PRegular.ttf')
-        printText('Кчау',  40, 240, 10, (255, 0, 0), 'PressStart2PRegular.ttf')
+        printText('!!You Win!!', 400, 400, 38, (255, 0, 0), 'PressStart2PRegular.ttf')
+        printText('Кчау', 40, 240, 10, (255, 0, 0), 'PressStart2PRegular.ttf')
 
-    # game_over__menu = True
+    game_over__menu = True
     running = True
     while running:
 
